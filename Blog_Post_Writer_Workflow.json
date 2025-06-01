@@ -1,0 +1,665 @@
+{
+  "name": "Blog Post Writer Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "title"
+            },
+            {
+              "name": "headings"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -200,
+        -220
+      ],
+      "id": "bfd6ffc2-c6b7-42f2-906f-bc08ed487135",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const title = $input.first().json.title;\nconst headingsRaw = $input.first().json.headings;\n\n// Split the headings by newline and trim whitespace\nconst headingsList = headingsRaw\n  .split('\\n')\n  .map(h => h.trim())\n  .filter(Boolean); // remove empty lines if any\n\nreturn [\n  {\n    json: {\n      title,\n      headings: headingsList\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        -220
+      ],
+      "id": "f22f07e1-a520-4253-a36b-3cfc2a3a4993",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        180
+      ],
+      "id": "6760a9aa-1c4c-446c-9f9e-2c9873b48480",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ulLOziYE3uIZc6he",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "headings",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        200,
+        -220
+      ],
+      "id": "53105c9b-927c-48b1-82ec-f769cf99ed3e",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        780,
+        -220
+      ],
+      "id": "64f122c9-0978-4306-bbd4-024e805021ea",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Code').item.json.title }}\n{{ $('Code').item.json.headings }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a master blog writer and your blog posts get thousands of shares, links, and consistent traffic. \n\nIn the user prompt, I have provided you with a blog post title and outline.\n\nWrite an introduction for this blog post. Follow best practices for writing engaging, hooking intros. Use a mix of short and medium sentences and start new paragraphs for every one or two sentences.\n\nThe max length should be 100 to 150 words.\n\nOutput as HTML, starting with <DOCTYPE HTML><HTML><BODY><p>\n\nUse <p> tags for new paragraphs and don't use \\n or any other markdown characters.\n\nIt is vital to my career that your output starts with the <."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        1000,
+        -220
+      ],
+      "id": "7b3c4460-bb87-45bc-b9bf-97cb0e6617d0",
+      "name": "Write introduction"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Code').item.json.title }}\n{{ $json.text }}\n{{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a master blog writer and your blog posts get thousands of shares, links, and consistent traffic. \n\nIn the user prompt, I have provided you with an entire blog post from an intro down to the last h2 section.\n\nWrite a conclusion for this blog post. Follow best practices for writing engaging conclusions. Use a mix of short and medium sentences and start new paragraphs for every one or two sentences.\n\nThe max length should be 100 to 150 words.\n\nOutput as HTML, starting with <h2>Conclusion</h2><p>\n\nUse <p> tags for new paragraphs and don't use \\n or any other markdown characters.\n\nIt is vital to my career that your output starts with the <."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        1360,
+        -220
+      ],
+      "id": "985e25bb-d754-459f-82b4-153756801d09",
+      "name": "Write Conclusion"
+    },
+    {
+      "parameters": {
+        "html": "{{ $('Write introduction').item.json.text }}\n{{ $('Aggregate').item.json.text }}\n{{ $json.text }}"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1720,
+        -220
+      ],
+      "id": "2f1e326f-afe3-483f-bacb-fa19c388a102",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aFEbGazPbDqwA-YzGQRntaQm9l10lKML97hp3yD6CjA",
+          "mode": "list",
+          "cachedResultName": "Blog Writer Internal Links",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aFEbGazPbDqwA-YzGQRntaQm9l10lKML97hp3yD6CjA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aFEbGazPbDqwA-YzGQRntaQm9l10lKML97hp3yD6CjA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1160,
+        220
+      ],
+      "id": "49b0befa-b879-4d67-a003-3459f891f178",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1tkwsToZLlEshQfI",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Blog post title: {{ $('Code').item.json.title }}\nAll headings: {{ $('Code').item.json.headings }}\n\n!Important CURRENT HEADING: {{ $json.headings }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a master blog writer and your blog posts get thousands of shares, links, and consistent traffic. \n\nIn the user prompt, I have provided you with a blog post title and outline, as well as the current heading I want to write about.\n\nWrite out this section of the blog post. Use a mix of short and medium sentences, and mimic a human writing style. Keep the tone conversational. Write accurate information.\n\nRefer to all the headings to make sure you don't repeat yourself in this section for something you may say later or have already said.\n\nRemember, this is part of a larger blog post, so you don't need to conclude or wrap up the section. You should avoid doing that.\n\nYou may insert <h3>s in the output where relevant.\n\nOutput as HTML, starting with <h2>...</h2><p>...\n\nUse <p> tags for new paragraphs and don't use \\n or any other markdown characters.\n\nIt is vital to my career that your output starts with the <."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        420,
+        -220
+      ],
+      "id": "bed2608f-6e87-4606-adb6-e1395789fbca",
+      "name": "Write Content"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.html }}",
+        "options": {
+          "systemMessage": "You are an SEO expert. I have provided you with the entire contents of a blog post.\n\nUse the Google Sheets tool to check my existing posts and output the entire blog post with relevant internal links. Add a maximum of 1-2 links per h2 section, not more. Do not add extra text - the anchor text must be content that's already there. If there is no fit, do not add a link.\n\nYour output should start directly at the <!DOCTYPE HTML> tag, nothing before that, and it should end at the closing </HTML> tag, nothing after that."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1000,
+        0
+      ],
+      "id": "380874c3-2d7b-4cfb-84c4-f5519c5e6799",
+      "name": "Add Internal Links"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are an SEO expert. I have provided you with the entire contents of a blog post.\n\nUse the Perplexity tool to find three external sources to link to. Add the links contextually - the anchor text must already be present in the body of the content, and the links must be added as HTML <a href = ...>.\n\nYour output should start directly at the <!DOCTYPE HTML> tag, nothing before that, and it should end at the closing </HTML> tag, nothing after that."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "093b0891-e0b0-4adf-9c3a-c7aa2543e78b",
+      "name": "Add external links"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get a list of 3 sources from Perplexity.ai.",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"sonar\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Only output URLs of sources\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{query}\"\n    }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "query",
+              "description": "The search query to use in Perplexity to get sources",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        220
+      ],
+      "id": "3e060c17-e31d-410f-8613-24d03619cf10",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $input.first().json.output || \"\";\n\nconst cleanedHtml = html.replace(/\\n/g, \"\");\n\nreturn [\n  {\n    json: {\n      html: cleanedHtml\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        0
+      ],
+      "id": "12a6c542-8f88-422f-b153-41903472637d",
+      "name": "Clean HTML"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Code').item.json.title }}\n{{ $('Code').item.json.headings }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a master at AI image generation. In the user prompt, I have provided you with  a title and outline for a blog post. Use this to generate a detailed image prompt for making a featured image to use with this content.|The image may be flat style illustration or photorealistic. Avoid depicting humans.  Do not output any newline characters."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        980,
+        380
+      ],
+      "id": "d0750994-5b07-4e63-a0a8-ff8f54ec704f",
+      "name": "Create Image Prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.replicate.com/v1/models/black-forest-labs/flux-schnell/predictions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"input\": {\n      \"prompt\": \"{{ $json.text }}. !Important There should be no text on the image.\",\n      \"go_fast\": true,\n      \"num_outputs\": 1,\n      \"aspect_ratio\": \"1:1\",\n      \"output_format\": \"webp\",\n      \"output_quality\": 80\n    }\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        380
+      ],
+      "id": "ecd2a81c-b821-4045-a026-c6dddae44c0b",
+      "name": "Generate Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QTLFvblmT8o7s28t",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 7
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        380
+      ],
+      "id": "ccd78843-0956-4c94-9d60-b1b1b8258ca5",
+      "name": "Wait",
+      "webhookId": "3946b608-8957-4f47-83b4-d8f1f7ed02b3"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls.get }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1740,
+        380
+      ],
+      "id": "b4edb7b4-4570-4dd5-955f-260e1b8fed38",
+      "name": "Get Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QTLFvblmT8o7s28t",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get image URL from current node\nconst imageUrl = $input.first().json.output[0];\n\n// Get HTML content from \"Clean HTML\" node\nconst html = $('Clean HTML').first().json.html;\n\n// Find position of second <h2>\nconst h2Matches = [...html.matchAll(/<h2>/g)];\nif (h2Matches.length < 1) {\n  throw new Error(\"Less than 1 <h2> tags found.\");\n}\nconst secondH2Index = h2Matches[0].index;\n\n// Clean and safe image block (no line breaks, no backslashes)\nconst imageBlock = `<div style=\"text-align:center; margin: 20px 0;\"><img src=\"${imageUrl}\" alt=\"Espresso Image\" style=\"max-width:100%; height:auto;\"></div>`;\n\n// Inject image before second <h2>\nconst modifiedHtml = html.slice(0, secondH2Index) + imageBlock + html.slice(secondH2Index);\n\n// Strip all \\n (just in case) and extra whitespace\nconst cleanedHtml = modifiedHtml.replace(/\\n/g, '').replace(/\\s{2,}/g, ' ');\n\nreturn [\n  {\n    json: {\n      html: cleanedHtml\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        980,
+        640
+      ],
+      "id": "3c9d1b69-8033-41b0-aaec-ef8e82a62a68",
+      "name": "Insert image into HTML"
+    },
+    {
+      "parameters": {
+        "sendTo": "shabbir@shabbirnoor.com",
+        "subject": "=New Post:  {{ $('Code').item.json.title }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1240,
+        640
+      ],
+      "id": "3b5092c4-8c7f-40af-acb0-0c2de6e285a3",
+      "name": "Gmail",
+      "webhookId": "50a562b6-c085-44b0-9160-4e9296b8779d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "vAU1tA2oIzDPqrIa",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Conclusion",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write introduction",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Content",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Add Internal Links",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Add external links",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Create Image Prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Write Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Write introduction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write introduction": {
+      "main": [
+        [
+          {
+            "node": "Write Conclusion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Conclusion": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Add Internal Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Add Internal Links",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Content": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Internal Links": {
+      "main": [
+        [
+          {
+            "node": "Add external links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "Add external links",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add external links": {
+      "main": [
+        [
+          {
+            "node": "Clean HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean HTML": {
+      "main": [
+        [
+          {
+            "node": "Create Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image": {
+      "main": [
+        [
+          {
+            "node": "Insert image into HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert image into HTML": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bd9b60e6-22dc-4fca-9660-b169d87c71ce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fb357db16d4f03c7d7597f4abaa6a5e06176011d3bee518d28bed06754cb1f31"
+  },
+  "id": "GisgLCrg60YIiFnk",
+  "tags": []
+}

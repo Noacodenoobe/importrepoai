@@ -1,0 +1,179 @@
+{
+  "name": "Blog Post Writer Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -380,
+        -140
+      ],
+      "id": "17b0c1dc-863f-4867-8d77-88c8dcd0dff5",
+      "name": "When chat message received",
+      "webhookId": "178c7a77-8574-4597-9e33-fcdcd5a954d8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a master SEO strategist. I will provide you with a topic for a blog post. You are to help me refine the blog post title and required H2s, no H3s. This is an iterative process, so we may do a little back and forth. Once I am happy, use the start writing tool."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -120,
+        -160
+      ],
+      "id": "29d50272-0beb-4685-a0e1-008e4cc2a1ad",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -180,
+        40
+      ],
+      "id": "82bb3e04-ee5b-450e-8647-cd3cc83239c2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ulLOziYE3uIZc6he",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "write_blog_post",
+        "description": "Call this tool to start writing the blog post.",
+        "workflowId": {
+          "__rl": true,
+          "value": "GisgLCrg60YIiFnk",
+          "mode": "list",
+          "cachedResultName": "Blog Post Writer Workflow"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('title', ``, 'string') }}",
+            "headings": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('headings', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "headings",
+              "displayName": "headings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        120,
+        80
+      ],
+      "id": "9739e0d0-89be-43fc-9c43-e77ef8ba8c5e",
+      "name": "Call n8n Workflow Tool"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -40,
+        80
+      ],
+      "id": "91959a9b-b27c-434e-af50-9b7e4cfc37de",
+      "name": "Window Buffer Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d322e487-6eac-40e2-8e52-0ce825223645",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fb357db16d4f03c7d7597f4abaa6a5e06176011d3bee518d28bed06754cb1f31"
+  },
+  "id": "bMeiIj9cIGLrI33n",
+  "tags": []
+}
