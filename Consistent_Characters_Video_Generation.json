@@ -1,0 +1,1582 @@
+{
+  "name": "Consistent Characters Video Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        -160
+      ],
+      "id": "f05511ee-78ca-4aac-89fb-5bf04ddd21e2",
+      "name": "When chat message received",
+      "webhookId": "8736d0e4-7741-43d1-bbba-575805e37f51"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an expert at generating viral short-form animated videos for YouTube.\n\nYour job is to generate 4 scene prompts for a youtube-shorts style video. Each scene features one character, alternating between Character A and Character B.\n\nYou MUST\n\n⸻\n\n1. Characters\n\nGenerate two full-body characters in anime-inspired 2D illustration style. These characters should be front-facing.\n\t•\tThe output should be prompts for character generation.\n\t•\tEach character must be described from head to toe with clothing and body type.\n\t•\tStyle: cel-shading, expressive facial features, clean linework, smooth color fill.\n\t•\tBackground: blank\n\t•\tNo props or additional characters.\n\t•\tClothing should be appropriate for a general audience — avoid low necklines, crop tops, or revealing styles.\n\n⸻\n\n2. Scenes\n\nGenerate four independent scene descriptions — 2 for Character A, 2 for Character B.\n\nEach scene must:\n\t•\tRefer to the character as “the man/woman/boy/girl/etc.”\n\t•\tContain only the one character (no crowd, no supporting characters).\n\t•\tDescribe the full environment: where they are, what they’re doing, and what’s visible around them.\n\t•\tMatch the character’s anime-style: 2D cel-shaded, expressive, clean outlines, vivid color fills.\n\t•\tBe self-contained and suitable for image generation (no dependencies between scenes).\n\n⸻\n\n3. Narration\n\nProvide one short line of narration per scene (MAX 75 characters of text !important).\n\t•\tUse informal, relatable tone.\n\t•\tReflect the character’s thoughts, feelings, or situation.\n\n⸻\n\n4. Image-to-Video Prompt\n\nFor each scene, describe subtle animated motion using ONE EACH of the following:\n\t•\tThe character (gesture, reaction, facial movement, etc.)\n\t•\tOptional environmental elements (e.g. wind-blown hair, leaves swaying)\n\nKeep motion subtle and natural.\n\n⸻\n\n✅ Sample Format Output\n\n{\n  \"characters\": {\n    \"characterA_prompt\": \"front-facing full-body anime-style 2D male character, cel-shaded, expressive face, short tousled brown hair, relaxed hoodie and sneakers, medium build, clean lineart, smooth color fill, no background, no props\",\n    \"characterB_prompt\": \"front-facing full-body anime-style 2D female character, cel-shaded, expressive features, long black hair in a ponytail, sporty jacket and jeans, slim build, clean lineart, soft shading, no background, no props\"\n  },\n  \"scenes\": [\n    {\n      \"character\": \"A\",\n      \"description\": \"Anime-style 2D illustration of the man standing at a city rooftop at dusk, leaning over a metal railing, with neon lights reflecting off nearby buildings. His hoodie flutters slightly in the evening breeze as he looks out thoughtfully.\",\n      \"dialog\": \"Ever wonder if the city ever sleeps? 'Cause I sure don't.\",\n      \"image_to_video_prompt\": \"the man’s hoodie ripples in the wind, he exhales slowly and narrows his eyes while leaning forward\"\n    },\n    {\n      \"character\": \"B\",\n      \"description\": \"Anime-style 2D illustration of the woman jogging through a cherry blossom path in spring. Pink petals drift through the air as she glances to the side, headphones on, and a soft grin on her face.\",\n      \"dialog\": \"Cherry blossoms, fresh air, and no notifications? This is peak happiness.\",\n      \"image_to_video_prompt\": \"the woman’s ponytail sways gently, a few petals land on her shoulder as she slows to a walk\"\n    },\n  {\n      \"character\": \"A\",\n      \"description\": \"xyz\",\n      \"dialog\": \"xyz\",\n      \"image_to_video_prompt\": \"xyz\"\n    },\n    {\n      \"character\": \"B\",\n      \"description\": \"xyz\",\n      \"dialog\": \"xyz\",\n      \"image_to_video_prompt\": \"xyz\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -520,
+        -160
+      ],
+      "id": "defa72f1-5255-42ae-89be-48077d4d4471",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"characters\": {\n    \"characterA_prompt\": \"front-facing full-body anime-style 2D male character, cel-shaded, expressive face, short tousled brown hair, relaxed hoodie and sneakers, medium build, clean lineart, smooth color fill, no background, no props\",\n    \"characterB_prompt\": \"front-facing full-body anime-style 2D female character, cel-shaded, expressive features, long black hair in a ponytail, sporty jacket and jeans, slim build, clean lineart, soft shading, no background, no props\"\n  },\n  \"scenes\": [\n    {\n      \"character\": \"A\",\n      \"description\": \"Anime-style 2D illustration of the man standing at a city rooftop at dusk, leaning over a metal railing, with neon lights reflecting off nearby buildings. His hoodie flutters slightly in the evening breeze as he looks out thoughtfully.\",\n      \"dialog\": \"Ever wonder if the city ever sleeps? 'Cause I sure don't.\",\n      \"image_to_video_prompt\": \"the man’s hoodie ripples in the wind, he exhales slowly and narrows his eyes while leaning forward\"\n    },\n    {\n      \"character\": \"B\",\n      \"description\": \"Anime-style 2D illustration of the woman jogging through a cherry blossom path in spring. Pink petals drift through the air as she glances to the side, headphones on, and a soft grin on her face.\",\n      \"dialog\": \"Cherry blossoms, fresh air, and no notifications? This is peak happiness.\",\n      \"image_to_video_prompt\": \"the woman’s ponytail sways gently, a few petals land on her shoulder as she slows to a walk\"\n    },\n  {\n      \"character\": \"A\",\n      \"description\": \"xyz\",\n      \"dialog\": \"xyz\",\n      \"image_to_video_prompt\": \"xyz\"\n    },\n    {\n      \"character\": \"B\",\n      \"description\": \"xyz\",\n      \"dialog\": \"xyz\",\n      \"image_to_video_prompt\": \"xyz\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -220,
+        20
+      ],
+      "id": "d3191315-c46a-489e-ae3d-713d8b059032",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -580,
+        20
+      ],
+      "id": "c3c3a3a5-ffc7-4a39-8905-7583967de6fd",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ulLOziYE3uIZc6he",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('When chat message received').item.json.chatInput }} video",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        60,
+        -160
+      ],
+      "id": "1b8cd3ae-dabc-434f-afe8-275425e013d2",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "w1LozBYF8UijOdoM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "share",
+        "folderNoRootId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        260,
+        -160
+      ],
+      "id": "ee4cd39e-1c50-4274-9b15-f6aebec5755d",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "w1LozBYF8UijOdoM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "  https://api.replicate.com/v1/models/minimax/image-01/predictions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"input\": {\n      \"prompt\": \"{{ $('Basic LLM Chain').item.json.output.characters.characterA_prompt }}\",\n      \"aspect_ratio\": \"9:16\",\n      \"number_of_images\": 1,\n      \"prompt_optimizer\": true\n    }\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        -300
+      ],
+      "id": "9255d305-024e-4b5d-ac35-9f3ec345d7fb",
+      "name": "Generate Character A",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QTLFvblmT8o7s28t",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1020,
+        -300
+      ],
+      "id": "1e2178be-bcfd-4657-a451-6c9518592f07",
+      "name": "Wait",
+      "webhookId": "b23a6db0-45f0-4834-a666-f3548a733952"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls.get }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        -300
+      ],
+      "id": "84fefb26-4d38-4a1b-b9a7-3ba859b636e9",
+      "name": "Check Character A",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QTLFvblmT8o7s28t",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed414d4e-dc5a-4637-b1a5-46158d47952f",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "=succeeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1460,
+        -300
+      ],
+      "id": "58a01e21-40fe-41e9-84b5-824ee2821760",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1inCZES0igKKFre-E8MfRbxoJq5FXGrXDVgtIGq4ENOI",
+          "mode": "list",
+          "cachedResultName": "Image-To-Video Automation Advanced",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1inCZES0igKKFre-E8MfRbxoJq5FXGrXDVgtIGq4ENOI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1inCZES0igKKFre-E8MfRbxoJq5FXGrXDVgtIGq4ENOI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Topic": "={{ $('When chat message received').item.json.chatInput }}",
+            "Character A Image": "={{ $json.output.characters.characterA_prompt }}",
+            "Character B Image": "={{ $json.output.characters.characterB_prompt }}",
+            "Scene 1 Image": "={{ $json.output.scenes[0].description }}",
+            "Scene 2 Image": "={{ $json.output.scenes[1].description }}",
+            "Scene 3 Image": "={{ $json.output.scenes[2].description }}",
+            "Scene 4 Image": "={{ $json.output.scenes[3].description }}",
+            "Scene 1 Video": "={{ $json.output.scenes[0].image_to_video_prompt }}",
+            "Scene 2 Video": "={{ $json.output.scenes[1].image_to_video_prompt }}",
+            "Scene 3 Video": "={{ $json.output.scenes[2].image_to_video_prompt }}",
+            "Scene 4 Video": "={{ $json.output.scenes[3].image_to_video_prompt }}",
+            "Scene 1 Dialog": "={{ $json.output.scenes[0].dialog }}",
+            "Scene 2 Dialog": "={{ $json.output.scenes[1].dialog }}",
+            "Scene 3 Dialog": "={{ $json.output.scenes[2].dialog }}",
+            "Scene 4 Dialog": "={{ $json.output.scenes[3].dialog }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Character A Image",
+              "displayName": "Character A Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Character B Image",
+              "displayName": "Character B Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 1 Image",
+              "displayName": "Scene 1 Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 2 Image",
+              "displayName": "Scene 2 Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 3 Image",
+              "displayName": "Scene 3 Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 4 Image",
+              "displayName": "Scene 4 Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 1 Video",
+              "displayName": "Scene 1 Video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 2 Video",
+              "displayName": "Scene 2 Video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 3 Video",
+              "displayName": "Scene 3 Video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 4 Video",
+              "displayName": "Scene 4 Video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 1 Dialog",
+              "displayName": "Scene 1 Dialog",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 2 Dialog",
+              "displayName": "Scene 2 Dialog",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 3 Dialog",
+              "displayName": "Scene 3 Dialog",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 4 Dialog",
+              "displayName": "Scene 4 Dialog",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -140,
+        -160
+      ],
+      "id": "03faa9c4-698a-43bf-9f6a-f9bac3de3b86",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1tkwsToZLlEshQfI",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        380,
+        580
+      ],
+      "id": "b662ceae-45ff-4ce3-886c-06cbb70565f8",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1inCZES0igKKFre-E8MfRbxoJq5FXGrXDVgtIGq4ENOI",
+          "mode": "list",
+          "cachedResultName": "Lip-Synced Image-To-Video Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1inCZES0igKKFre-E8MfRbxoJq5FXGrXDVgtIGq4ENOI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1inCZES0igKKFre-E8MfRbxoJq5FXGrXDVgtIGq4ENOI/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Topic",
+              "lookupValue": "={{ $('When chat message received').item.json.chatInput }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1880,
+        140
+      ],
+      "id": "75ce23ac-ab7f-4bce-8320-884e5d419ca9",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1tkwsToZLlEshQfI",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        -20
+      ],
+      "id": "cd2db6e5-cdba-4fb6-9b1f-e4bcac1f1058",
+      "name": "Wait1",
+      "webhookId": "0f1f4929-b870-4002-8a6a-91f6b03d75b8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed414d4e-dc5a-4637-b1a5-46158d47952f",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "=succeeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1480,
+        -20
+      ],
+      "id": "5b138cab-70ea-4026-8058-cca9f9ef32bb",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "  https://api.replicate.com/v1/models/minimax/image-01/predictions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"input\": {\n      \"prompt\": \"{{ $('Basic LLM Chain').item.json.output.characters.characterB_prompt }}\",\n      \"aspect_ratio\": \"9:16\",\n      \"number_of_images\": 1,\n      \"prompt_optimizer\": true\n    }\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "24d38155-8cd0-405a-98b6-2009afa125a5",
+      "name": "Generate Character B",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QTLFvblmT8o7s28t",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls.get }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1260,
+        -20
+      ],
+      "id": "3988bbbb-3d42-4a4a-8f6e-f90a17fe5067",
+      "name": "Check Character B",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QTLFvblmT8o7s28t",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1700,
+        -140
+      ],
+      "id": "bc9d9729-1c8c-454e-a949-3acf43b2b40c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        -140
+      ],
+      "id": "ff6fe686-a5d8-4867-8198-b2b17978c4d6",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input item (your structured JSON) is assumed to be at items[0].json\nconst input = items[0].json;\n\nconst scenes = [1, 2, 3, 4].map((i) => {\n  return {\n    scene_number: i,\n    topic: input.Topic,\n    character: i % 2 === 1 ? \"A\" : \"B\",\n    character_image_prompt: i % 2 === 1 ? input[\"Character A Image\"] : input[\"Character B Image\"],\n    scene_image_prompt: input[`Scene ${i} Image`],\n    scene_video_prompt: input[`Scene ${i} Video`],\n    scene_dialog: input[`Scene ${i} Dialog`]\n  };\n});\n\nreturn scenes.map(scene => ({ json: scene }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        140
+      ],
+      "id": "26eae192-d69c-49fd-a7d3-86e0156cf5cf",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        640
+      ],
+      "id": "5769661d-cea4-475d-b1d8-c030c89f5a44",
+      "name": "Wait2",
+      "webhookId": "0f60db73-848d-405d-a66b-e2c73de0d1ff"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed414d4e-dc5a-4637-b1a5-46158d47952f",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "=succeeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        620
+      ],
+      "id": "5c4ffb80-8b0a-4a9c-8c6b-9ac8b3fe3241",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.replicate.com/v1/models/minimax/image-01/predictions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"input\": {\n      \"prompt\": \"{{ $json.scene_image_prompt }}\",\n      \"aspect_ratio\": \"3:4\",\n      \"number_of_images\": 1,\n      \"prompt_optimizer\": true,\n      \"subject_reference\": \"{{ $json.character === \"A\" ? $('Aggregate').item.json.data[0].output[0] : $('Aggregate').item.json.data[1].output[0] }}\"\n    }\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        680
+      ],
+      "id": "9232ce2f-bb8c-4b38-87b4-aabf9f39bc4f",
+      "name": "Generate Scenes",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QTLFvblmT8o7s28t",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls.get }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        640
+      ],
+      "id": "a9eea39b-a7d1-4953-b34d-c67b14f039f0",
+      "name": "Check Scene",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QTLFvblmT8o7s28t",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.elevenlabs.io/v1/text-to-speech/iZwqKhSeDEzcKkGz53lD",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model_id",
+              "value": "eleven_multilingual_v2"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('Loop Over Items').item.json.scene_dialog }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2180,
+        700
+      ],
+      "id": "3caf3471-bb9f-442c-aac5-cdcfd4ffceec",
+      "name": "Generate Dialogs",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "unsVcAGpZDDzrQ1k",
+          "name": "ElevenLabs"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "=Scene  {{ $('Loop Over Items').item.json.scene_number }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Google Drive').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1980,
+        700
+      ],
+      "id": "10d15ff2-2b05-46bc-9cef-16eefbdc6881",
+      "name": "Upload Scene Image",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "w1LozBYF8UijOdoM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "=scene_{{ $('Loop Over Items').item.json.scene_number }}_dialog",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Upload Scene Image').item.json.parents[0] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2380,
+        700
+      ],
+      "id": "67983fe1-c098-4314-acbb-7592fda971b5",
+      "name": "Upload Dialog",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "w1LozBYF8UijOdoM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Plan Video",
+        "height": 500,
+        "width": 1280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -820,
+        -300
+      ],
+      "typeVersion": 1,
+      "id": "c304402c-df30-47e7-a3f6-62f9dcdb35c6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Characters",
+        "height": 680,
+        "width": 1660,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        600,
+        -380
+      ],
+      "typeVersion": 1,
+      "id": "7b4e9563-f396-46cf-8f19-f8f907343225",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Scenes, Dialogs, and Videos",
+        "height": 840,
+        "width": 2400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        420
+      ],
+      "typeVersion": 1,
+      "id": "cf30cf58-957d-49b9-8c1e-d2d8692fa649",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"hailuo\",\n    \"task_type\": \"video_generation\",\n    \"input\": {\n        \"prompt\": \"{{ $('Loop Over Items').item.json.scene_video_prompt }}\",\n        \"model\": \"i2v-01\",\n        \"image_url\": \"{{ $('Upload Scene Image').item.json.webContentLink }}\",\n        \"expand_prompt\": true\n    },\n    \"config\": {\n        \"service_mode\": \"public\",\n        \"webhook_config\": {\n            \"endpoint\": \"\",\n            \"secret\": \"\"\n        }\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        960
+      ],
+      "id": "f9b19338-ae30-48dc-82ff-e7654b4d4206",
+      "name": "Generate Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qY81NBvSAuSpmUCw",
+          "name": "PiAPI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.piapi.ai/api/v1/task/{{ $json.data.task_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1060,
+        960
+      ],
+      "id": "99eb78cc-fde3-4495-b17d-dc83f9be3bd2",
+      "name": "Check Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qY81NBvSAuSpmUCw",
+          "name": "PiAPI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 7,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        840,
+        960
+      ],
+      "id": "d160498c-55a5-464a-8d88-b3f550a5120d",
+      "name": "Wait3",
+      "webhookId": "02bf8137-2d6b-4196-99f8-d0af20eae731"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "86b63fdf-4fb1-4f9c-8a14-5544a80f5f1a",
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1260,
+        960
+      ],
+      "id": "98fdd441-1c9c-4537-8964-b5f24fdc7ec2",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.data.output.video_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        1020
+      ],
+      "id": "798b5389-a589-4e54-9959-77dac2014d69",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "name": "=scene-{{ $('Loop Over Items').item.json.scene_number }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Google Drive').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1800,
+        1020
+      ],
+      "id": "00140f05-a515-4c02-b71c-f4f452bd01d7",
+      "name": "Upload Video",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "w1LozBYF8UijOdoM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "scene",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Google Drive').item.json.id }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        760,
+        480
+      ],
+      "id": "38e36ec0-22b9-4147-aa4d-9166a7da6c11",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "w1LozBYF8UijOdoM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const videoFiles = {};\nconst audioFiles = {};\n\n// Loop through items and categorize\nfor (const item of items) {\n  const name = item.json.name;\n  const id = item.json.id;\n\n  // Match video files: scene-1, scene-2, etc.\n  const videoMatch = name.match(/^scene-(\\d+)$/);\n  if (videoMatch) {\n    const sceneNum = videoMatch[1];\n    if (!videoFiles[sceneNum]) {\n      videoFiles[sceneNum] = {\n        name,\n        url: `https://drive.google.com/uc?id=${id}&export=download`\n      };\n    }\n  }\n\n  // Match audio files: scene_1_dialog, scene_2_dialog, etc.\n  const audioMatch = name.match(/^scene_(\\d+)_dialog$/);\n  if (audioMatch) {\n    const sceneNum = audioMatch[1];\n    if (!audioFiles[sceneNum]) {\n      audioFiles[sceneNum] = {\n        name,\n        url: `https://drive.google.com/uc?id=${id}&export=download`\n      };\n    }\n  }\n}\n\n// Sort scene numbers and limit to first 4 of each\nconst sceneNumbers = Object.keys(videoFiles)\n  .filter(n => audioFiles[n]) // Only include scenes that have both video + audio\n  .sort((a, b) => Number(a) - Number(b))\n  .slice(0, 4);\n\n// Combine into 8 output items\nconst output = [];\n\nfor (const n of sceneNumbers) {\n  output.push({ json: videoFiles[n] });\n  output.push({ json: audioFiles[n] });\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        980,
+        480
+      ],
+      "id": "51a315cd-36ba-4bf8-8a95-6baaf25786fe",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        480
+      ],
+      "id": "f6415d5e-805d-4640-a8db-066c66c4c90d",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"template_id\": \"25345183-781b-4609-b5de-4fa736739a04\",\n  \"modifications\": {\n    \"Image-1.source\": \"{{ $json.data[0].url }}\",\n    \"Voiceover-1.source\": \"{{ $json.data[1].url }}\",\n    \"Image-2.source\": \"{{ $json.data[2].url }}\",\n    \"Voiceover-2.source\": \"{{ $json.data[3].url }}\",\n    \"Image-3.source\": \"{{ $json.data[4].url }}\",\n    \"Voiceover-3.source\": \"{{ $json.data[5].url }}\",\n    \"Image-4.source\": \"{{ $json.data[6].url }}\",\n    \"Voiceover-4.source\": \"{{ $json.data[7].url }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1480,
+        460
+      ],
+      "id": "c8816832-7680-4c73-b390-165b38e219a3",
+      "name": "Creatomate",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3LLZIaQvmlgo3GmT",
+          "name": "Creatomate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1800,
+        700
+      ],
+      "id": "3df8e29e-0807-4bce-b52c-e9a55d3700e8",
+      "name": "Download Image"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Generate Character A",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Character B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Character A": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Check Character A",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Character A": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Check Character B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Character B": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Character B": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Check Scene",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Scenes": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Scene": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Dialogs": {
+      "main": [
+        [
+          {
+            "node": "Upload Dialog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Scene Image": {
+      "main": [
+        [
+          {
+            "node": "Generate Dialogs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Dialog": {
+      "main": [
+        [
+          {
+            "node": "Generate Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Check Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Video": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Upload Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Creatomate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Upload Scene Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "addafbae-2ce1-40de-bc85-813ab004c3a0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fb357db16d4f03c7d7597f4abaa6a5e06176011d3bee518d28bed06754cb1f31"
+  },
+  "id": "gwxweRzulofCCEy0",
+  "tags": []
+}
