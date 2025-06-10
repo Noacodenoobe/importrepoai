@@ -1,0 +1,3453 @@
+{
+  "name": "Deep Research V2 + RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"topic\": \"AI in Education\",\n  \"title\": \"The effect of AI in education\",\n  \"deep_research_areas_count\": \"{number}\",\n  \"deep_research_areas\": [\n    {\n      \"title\": \"Algorithmic Bias in Adaptive Learning Systems\",\n      \"description\": \"This sub-area explores how machine learning models used in educational platforms may reinforce existing inequalities through biased training data or opaque algorithmic decisions. It’s important because AI-driven personalization directly affects how students are assessed, taught, and supported. The complexity lies in balancing personalization with fairness, understanding how bias manifests, and designing interventions. Researchers ask questions such as: How do adaptive learning systems affect marginalized students? What accountability frameworks can be built into educational AI systems?\"\n    },\n    {\n      \"title\": \"The Cognitive Impact of AI Tutors on Student Learning Trajectories\",\n      \"description\": \"This area investigates the long-term cognitive and behavioral effects of AI-based tutoring systems on how students learn, problem-solve, and retain knowledge. It is complex because AI tutors alter the dynamics of teacher-student interaction, motivation, and mental workload. Important research questions include: How does reliance on AI tutors affect critical thinking? Do AI tutors foster dependency or autonomy over time? What is the neurological impact of frequent AI-guided learning sessions?\"\n    },\n    {\n      \"title\": \"Ethical Governance Models for AI Integration in K-12 Curricula\",\n      \"description\": \"This research area examines the frameworks, policies, and ethical considerations around introducing AI technologies into primary and secondary education. The complexity comes from the intersection of pedagogy, data privacy, regulatory gaps, and child development. Researchers explore questions like: What ethical guardrails should guide AI use among minors? How can consent and transparency be maintained in classrooms? What models ensure AI supports rather than replaces human educators?\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -2092,
+        1530
+      ],
+      "id": "212ce27c-5201-4ccd-9e27-267b74ee687a",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=I am conducting a deep research investigation on the topic in the prompt.\n\nYour first task is to generate an engaging identify highly specific and intellectually rich sub-areas within this topic that would benefit from deep, focused exploration. These are not general themes, but precise angles that could each lead to an in-depth report or academic study.\n\nFor each sub-area, provide:\n\t1.\tA title that clearly conveys the angle.\n\t2.\tA one-paragraph description explaining:\n\t•\tWhy this sub-area is important\n\t•\tWhat makes it complex or nuanced\n\t•\tWhat kinds of questions or problems are typically explored within it\n\nYour response should reflect graduate-level thinking and an awareness of current debates or developments in the field. Avoid surface-level overviews or broad categories.\n\nGenerate an engaging title for the paper and exactly 3 sub-research areas."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -2240,
+        1310
+      ],
+      "id": "bf3e9d6c-a2dc-4f50-936a-ce10d282a84b",
+      "name": "Deep Research Areas"
+    },
+    {
+      "parameters": {
+        "content": "## Identify Deep Research Areas",
+        "height": 900,
+        "width": 1700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2820,
+        920
+      ],
+      "typeVersion": 1,
+      "id": "26f767da-e190-46e8-89bf-ccfffd549e86",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"query\": \"{{ $json.topic_1.title }}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"advanced\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 3,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -828,
+        660
+      ],
+      "id": "590e6f49-a030-46ad-9ef5-114060a657da",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ugAKuytDz61wg9ws",
+          "name": "Tavily"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f8a9595-a7cc-4847-a4df-b13463da1441",
+              "name": "topic_1",
+              "value": "={\n  \"topic_number\": \"1\",\n  \"title\": \"{{ $('Deep Research Areas').item.json.output.title }}\",\n  \"supporting_text\": \"{{ $('Deep Research Areas').item.json.output.deep_research_areas[0].description }}\"\n}",
+              "type": "object"
+            },
+            {
+              "id": "d77dde66-bdf4-4ec8-ba32-2a44a65e6da6",
+              "name": "topic_2",
+              "value": "={\n  \"topic_number\": \"2\",\n  \"title\": \"{{ $('Deep Research Areas').item.json.output.deep_research_areas[1].title }}\",\n  \"supporting_text\": \"{{ $('Deep Research Areas').item.json.output.deep_research_areas[1].description }}\"\n}",
+              "type": "object"
+            },
+            {
+              "id": "b1c57cd8-fc97-44d1-8eea-a90cbd11ff71",
+              "name": "topic_3",
+              "value": "={\n  \"topic_number\": \"3\",\n  \"title\": \"{{ $('Deep Research Areas').item.json.output.deep_research_areas[2].title }}\",\n  \"supporting_text\": \"{{ $('Deep Research Areas').item.json.output.deep_research_areas[2].description }}\"\n}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1048,
+        1310
+      ],
+      "id": "7d7cf143-e052-42c5-8e06-b7cad195b4a6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a deep research expert. In the prompt, I have provided you with an outline for a research paper. Use the outline to generate an academic, but easy-to-understand introduction.\n\nThe intro should be formatted with HTML as follows. Avoid using newline characters:\n\n<div style=\"background-color: #e6f3ff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif;\">\n  <h2 style=\"margin-top: 0;\">Introduction</h2>\n  <p>\n    In today's rapidly evolving digital landscape, the ability to conduct deep, structured research is more valuable than ever. This report delves into key areas of exploration within the broader topic, offering insights, context, and potential directions for further investigation. Our goal is to provide a thoughtful and thorough foundation for understanding complex subjects from multiple perspectives.\n  </p>\n</div>"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -1864,
+        1310
+      ],
+      "id": "c3971d54-5e66-4a38-9639-d5d55f94e9e3",
+      "name": "Generate Intro"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('Deep Research Areas').item.json.output.title }}",
+            "Introduction": "={{ $json.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Sources",
+              "displayName": "Chapter 1 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content",
+              "displayName": "Chapter 1 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 2",
+              "displayName": "Chapter 1 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 3",
+              "displayName": "Chapter 1 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Sources",
+              "displayName": "Chapter 2 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 2 Content",
+              "displayName": "Chapter 2 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 2",
+              "displayName": "Chapter 2 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 3",
+              "displayName": "Chapter 2 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Sources",
+              "displayName": "Chapter 3 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 3 Content",
+              "displayName": "Chapter 3 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 2",
+              "displayName": "Chapter 3 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 3",
+              "displayName": "Chapter 3 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conclusion",
+              "displayName": "Conclusion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Table Of Contents",
+              "displayName": "Table Of Contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1488,
+        1310
+      ],
+      "id": "c69837d1-03df-4d56-be55-b9cd18a0489a",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Here are some sources for a research paper I'm writing\n\n{{ $json.results[0].url }}\n{{ $json.results[0].title }}\n\n{{ $json.results[1].url }}\n{{ $json.results[1].title }}\n\n{{ $json.results[2].url }}\n{{ $json.results[2].title }}\n\nOutput as a sources list formatted with HTML as follows, starting directly with the opening div tag. It is vital to my career that you don't use newline characters or '''html or anything else:\n\n<div style=\"background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-family: Arial, sans-serif;\">\n  <h4 style=\"margin-top: 0;\">Sources</h4>\n  <ul style=\"padding-left: 20px; line-height: 1.6;\">\n    <li>\n      <a href=\"https://www.globalcitizen.org/en/content/water-scarcity-in-africa-explainer-what-to-know/\" target=\"_blank\">\n        Water Scarcity in Africa: Everything You Need to Know – Global Citizen\n      </a>\n    </li>\n    <li>\n      <a href=\"https://www.sciencedirect.com/science/article/abs/pii/S0048969721054978\" target=\"_blank\">\n        Understanding responses to climate-related water scarcity in Africa – ScienceDirect\n      </a>\n    </li>\n    <li>\n      <a href=\"https://www.greenpeace.org/africa/en/blog/55086/water-woes-13-undeniable-facts-about-africas-water-scarcity/\" target=\"_blank\">\n        Water woes: 13 undeniable facts about Africa's water scarcity – Greenpeace\n      </a>\n    </li>\n  </ul>\n</div>\n"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -640,
+        420
+      ],
+      "id": "2453f97b-30b2-4787-9c25-b44037fd383d",
+      "name": "Generate Sources List",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('Deep Research Areas').item.json.output.title }}",
+            "Chapter 1 Sources": "={{ $json.choices[0].message.content }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Sources",
+              "displayName": "Chapter 1 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content",
+              "displayName": "Chapter 1 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 2",
+              "displayName": "Chapter 1 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 3",
+              "displayName": "Chapter 1 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Sources",
+              "displayName": "Chapter 2 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 2 Content",
+              "displayName": "Chapter 2 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 2",
+              "displayName": "Chapter 2 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 3",
+              "displayName": "Chapter 2 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Sources",
+              "displayName": "Chapter 3 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 3 Content",
+              "displayName": "Chapter 3 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 2",
+              "displayName": "Chapter 3 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 3",
+              "displayName": "Chapter 3 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conclusion",
+              "displayName": "Conclusion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Table Of Contents",
+              "displayName": "Table Of Contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -180,
+        420
+      ],
+      "id": "84c63f43-b86d-4553-bdc7-1d7e492fbdcd",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"topic_number\": 1,\n    \"topic\": \"Water Scarcity in Africa: Everything You Need to Know\",\n    \"content\": \"1 in 3 African citizens are impacted by water scarcity. 400 million people in sub-Saharan Africa lack access to basic drinking water. Citizens in sub-Saharan Africa travel 30 minutes on average daily to access water. [...] Water scarcity in Africa is a dire situation, and is only getting worse. As Africa’s population continues to grow and climate change continues to rob the continent of the finite resource, it is predicted that by 2025, close to 230 million Africans will be facing water scarcity, and up to 460 million will be living in water-stressed areas.\"\n  },\n  {\n    \"topic_number\": 2,\n    \"topic\": \"Understanding responses to climate-related water scarcity in Africa\",\n    \"content\": \"In sub-Saharan Africa, the impacts of water scarcity threaten livelihoods and wellbeing across the continent and are driving a broad range\"\n  },\n  {\n    \"topic_number\": 3,\n    \"topic\": \"Water woes: 13 undeniable facts about Africa's water scarcity\",\n    \"content\": \"Roughly two-thirds of Africa is categorised as arid or semi-arid, despite the continent possessing close to 9% of global freshwater resources. [...] Girls and women in Sub-Saharan Africa were spending an estimated 40 billion hours annually collecting water. [...] Over 90% of the continent’s population faces water insecurity today.\"\n  }\n]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        880
+      ],
+      "id": "4cf2559b-9027-40c6-9682-d4c62a8ed4d8",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.results }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Output the following as a JSON object and add a serial number for each one."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -608,
+        660
+      ],
+      "id": "9fc8b1d6-66e3-410f-a8cc-647261f87e4d",
+      "name": "Split Tavily Response"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $json.output[0].topic }}\n{{ $json.output[0].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $json.output[1].topic }}\n{{ $json.output[1].content }}\n\n{{ $json.output[2].topic }}\n{{ $json.output[2].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -232,
+        760
+      ],
+      "id": "52d9edd1-b0e3-4904-ab88-5c6bcd617bd9",
+      "name": "Write Section 1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $('Split Tavily Response').item.json.output[1].topic }}\n{{ $('Split Tavily Response').item.json.output[1].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $('Split Tavily Response').item.json.output[0].topic }}\n{{ $('Split Tavily Response').item.json.output[0].content }}\n\n{{ $('Split Tavily Response').item.json.output[2].topic }}\n{{ $('Split Tavily Response').item.json.output[2].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        144,
+        760
+      ],
+      "id": "26740d9f-d0b6-4055-9776-5f9cde3877fb",
+      "name": "Write Section 2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $('Split Tavily Response').item.json.output[2].topic }}\n{{ $('Split Tavily Response').item.json.output[2].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $('Split Tavily Response').item.json.output[1].topic }}\n{{ $('Split Tavily Response').item.json.output[1].content }}\n\n{{ $('Split Tavily Response').item.json.output[0].topic }}\n{{ $('Split Tavily Response').item.json.output[0].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        520,
+        760
+      ],
+      "id": "1f36f709-93a6-4b94-9288-d9d2a7ab7ed2",
+      "name": "Write Section 3"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('Deep Research Areas').item.json.output.title }}",
+            "Chapter 1 Content": "={{ $('Write Section 1').item.json.text }}",
+            "Chapter 1 Content 2": "={{ $('Write Section 2').item.json.text }}",
+            "Chapter 1 Content 3": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Sources",
+              "displayName": "Chapter 1 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content",
+              "displayName": "Chapter 1 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 2",
+              "displayName": "Chapter 1 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 3",
+              "displayName": "Chapter 1 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Sources",
+              "displayName": "Chapter 2 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 2 Content",
+              "displayName": "Chapter 2 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 2",
+              "displayName": "Chapter 2 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 3",
+              "displayName": "Chapter 2 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Sources",
+              "displayName": "Chapter 3 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 3 Content",
+              "displayName": "Chapter 3 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 2",
+              "displayName": "Chapter 3 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 3",
+              "displayName": "Chapter 3 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conclusion",
+              "displayName": "Conclusion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Table Of Contents",
+              "displayName": "Table Of Contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        760
+      ],
+      "id": "c06d5d7c-8869-4625-a77a-24db81faaae0",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"query\": \"{{ $json.topic_2.title }}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"advanced\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 3,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -828,
+        1360
+      ],
+      "id": "73edc5b2-7044-4ebd-8987-572450323327",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ugAKuytDz61wg9ws",
+          "name": "Tavily"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Here are some sources for a research paper I'm writing\n\n{{ $json.results[0].url }}\n{{ $json.results[0].title }}\n\n{{ $json.results[1].url }}\n{{ $json.results[1].title }}\n\n{{ $json.results[2].url }}\n{{ $json.results[2].title }}\n\nOutput as a sources list formatted with HTML as follows, starting directly with the opening div tag. It is vital to my career that you don't use newline characters or '''html or anything else:\n\n<div style=\"background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-family: Arial, sans-serif;\">\n  <h4 style=\"margin-top: 0;\">Sources</h4>\n  <ul style=\"padding-left: 20px; line-height: 1.6;\">\n    <li>\n      <a href=\"https://www.globalcitizen.org/en/content/water-scarcity-in-africa-explainer-what-to-know/\" target=\"_blank\">\n        Water Scarcity in Africa: Everything You Need to Know – Global Citizen\n      </a>\n    </li>\n    <li>\n      <a href=\"https://www.sciencedirect.com/science/article/abs/pii/S0048969721054978\" target=\"_blank\">\n        Understanding responses to climate-related water scarcity in Africa – ScienceDirect\n      </a>\n    </li>\n    <li>\n      <a href=\"https://www.greenpeace.org/africa/en/blog/55086/water-woes-13-undeniable-facts-about-africas-water-scarcity/\" target=\"_blank\">\n        Water woes: 13 undeniable facts about Africa's water scarcity – Greenpeace\n      </a>\n    </li>\n  </ul>\n</div>\n"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -608,
+        1460
+      ],
+      "id": "29b643c6-0ce0-45d4-bde6-00a9ae8dd04b",
+      "name": "Generate Sources List1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('Deep Research Areas').item.json.output.title }}",
+            "Chapter 2 Sources": "={{ $json.choices[0].message.content }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Sources",
+              "displayName": "Chapter 1 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content",
+              "displayName": "Chapter 1 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 2",
+              "displayName": "Chapter 1 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 3",
+              "displayName": "Chapter 1 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Sources",
+              "displayName": "Chapter 2 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 2 Content",
+              "displayName": "Chapter 2 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 2",
+              "displayName": "Chapter 2 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 3",
+              "displayName": "Chapter 2 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Sources",
+              "displayName": "Chapter 3 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 3 Content",
+              "displayName": "Chapter 3 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 2",
+              "displayName": "Chapter 3 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 3",
+              "displayName": "Chapter 3 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conclusion",
+              "displayName": "Conclusion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Table Of Contents",
+              "displayName": "Table Of Contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -280,
+        1460
+      ],
+      "id": "0ec895a5-840f-4742-9ad4-8ad72aed1dff",
+      "name": "Google Sheets3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"topic_number\": 1,\n    \"topic\": \"Water Scarcity in Africa: Everything You Need to Know\",\n    \"content\": \"1 in 3 African citizens are impacted by water scarcity. 400 million people in sub-Saharan Africa lack access to basic drinking water. Citizens in sub-Saharan Africa travel 30 minutes on average daily to access water. [...] Water scarcity in Africa is a dire situation, and is only getting worse. As Africa’s population continues to grow and climate change continues to rob the continent of the finite resource, it is predicted that by 2025, close to 230 million Africans will be facing water scarcity, and up to 460 million will be living in water-stressed areas.\"\n  },\n  {\n    \"topic_number\": 2,\n    \"topic\": \"Understanding responses to climate-related water scarcity in Africa\",\n    \"content\": \"In sub-Saharan Africa, the impacts of water scarcity threaten livelihoods and wellbeing across the continent and are driving a broad range\"\n  },\n  {\n    \"topic_number\": 3,\n    \"topic\": \"Water woes: 13 undeniable facts about Africa's water scarcity\",\n    \"content\": \"Roughly two-thirds of Africa is categorised as arid or semi-arid, despite the continent possessing close to 9% of global freshwater resources. [...] Girls and women in Sub-Saharan Africa were spending an estimated 40 billion hours annually collecting water. [...] Over 90% of the continent’s population faces water insecurity today.\"\n  }\n]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        1880
+      ],
+      "id": "97b1d684-3b88-4186-8a78-4b21eb179252",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.results }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Output the following as a JSON object and add a serial number for each one."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -608,
+        1660
+      ],
+      "id": "a65059b5-c3ff-452c-8028-5da9875e54d1",
+      "name": "Split Tavily Response1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('Deep Research Areas').item.json.output.title }}",
+            "Chapter 2 Content": "={{ $('Write Section  4').item.json.text }}",
+            "Chapter 2 Content 2": "={{ $('Write Section 5').item.json.text }}",
+            "Chapter 2 Content 3": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Sources",
+              "displayName": "Chapter 1 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content",
+              "displayName": "Chapter 1 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 2",
+              "displayName": "Chapter 1 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 3",
+              "displayName": "Chapter 1 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Sources",
+              "displayName": "Chapter 2 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 2 Content",
+              "displayName": "Chapter 2 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 2",
+              "displayName": "Chapter 2 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 3",
+              "displayName": "Chapter 2 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Sources",
+              "displayName": "Chapter 3 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 3 Content",
+              "displayName": "Chapter 3 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 2",
+              "displayName": "Chapter 3 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 3",
+              "displayName": "Chapter 3 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conclusion",
+              "displayName": "Conclusion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Table Of Contents",
+              "displayName": "Table Of Contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        1760
+      ],
+      "id": "9d2c3168-3b7c-4475-8c2c-87651dd06ae7",
+      "name": "Google Sheets4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $json.output[0].topic }}\n{{ $json.output[0].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $json.output[1].topic }}\n{{ $json.output[1].content }}\n\n{{ $json.output[2].topic }}\n{{ $json.output[2].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -232,
+        1760
+      ],
+      "id": "52b9625d-2039-434b-b31c-70e7aa9bf15f",
+      "name": "Write Section  4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $('Split Tavily Response1').item.json.output[2].topic }}\n{{ $('Split Tavily Response1').item.json.output[2].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $('Split Tavily Response1').item.json.output[1].topic }}\n{{ $('Split Tavily Response1').item.json.output[1].content }}\n\n{{ $('Split Tavily Response1').item.json.output[0].topic }}\n{{ $('Split Tavily Response1').item.json.output[0].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        520,
+        1760
+      ],
+      "id": "6f783bc3-fca1-4b9c-9dc9-e0b8853c9250",
+      "name": "Write Section 6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $('Split Tavily Response1').item.json.output[1].topic }}\n{{ $('Split Tavily Response1').item.json.output[1].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $('Split Tavily Response1').item.json.output[0].topic }}\n{{ $('Split Tavily Response1').item.json.output[0].content }}\n\n{{ $('Split Tavily Response1').item.json.output[2].topic }}\n{{ $('Split Tavily Response1').item.json.output[2].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        144,
+        1760
+      ],
+      "id": "ff0de005-fb5b-44b5-99ac-6e3477434461",
+      "name": "Write Section 5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"query\": \"{{ $json.topic_3.title }}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"advanced\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 3,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -828,
+        2210
+      ],
+      "id": "95cd2c50-5ca3-48a7-bcbb-75dd6b0dac9e",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ugAKuytDz61wg9ws",
+          "name": "Tavily"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Here are some sources for a research paper I'm writing\n\n{{ $json.results[0].url }}\n{{ $json.results[0].title }}\n\n{{ $json.results[1].url }}\n{{ $json.results[1].title }}\n\n{{ $json.results[2].url }}\n{{ $json.results[2].title }}\n\nOutput as a sources list formatted with HTML as follows, starting directly with the opening div tag. It is vital to my career that you don't use newline characters or '''html or anything else:\n\n<div style=\"background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-family: Arial, sans-serif;\">\n  <h4 style=\"margin-top: 0;\">Sources</h4>\n  <ul style=\"padding-left: 20px; line-height: 1.6;\">\n    <li>\n      <a href=\"https://www.globalcitizen.org/en/content/water-scarcity-in-africa-explainer-what-to-know/\" target=\"_blank\">\n        Water Scarcity in Africa: Everything You Need to Know – Global Citizen\n      </a>\n    </li>\n    <li>\n      <a href=\"https://www.sciencedirect.com/science/article/abs/pii/S0048969721054978\" target=\"_blank\">\n        Understanding responses to climate-related water scarcity in Africa – ScienceDirect\n      </a>\n    </li>\n    <li>\n      <a href=\"https://www.greenpeace.org/africa/en/blog/55086/water-woes-13-undeniable-facts-about-africas-water-scarcity/\" target=\"_blank\">\n        Water woes: 13 undeniable facts about Africa's water scarcity – Greenpeace\n      </a>\n    </li>\n  </ul>\n</div>\n"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -608,
+        2060
+      ],
+      "id": "dc7d3b9a-6123-47c7-be11-ae9ae30972ad",
+      "name": "Generate Sources List2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('Deep Research Areas').item.json.output.title }}",
+            "Chapter 3 Sources": "={{ $json.choices[0].message.content }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Sources",
+              "displayName": "Chapter 1 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content",
+              "displayName": "Chapter 1 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 2",
+              "displayName": "Chapter 1 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 3",
+              "displayName": "Chapter 1 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Sources",
+              "displayName": "Chapter 2 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 2 Content",
+              "displayName": "Chapter 2 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 2",
+              "displayName": "Chapter 2 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 3",
+              "displayName": "Chapter 2 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Sources",
+              "displayName": "Chapter 3 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 3 Content",
+              "displayName": "Chapter 3 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 2",
+              "displayName": "Chapter 3 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 3",
+              "displayName": "Chapter 3 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conclusion",
+              "displayName": "Conclusion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Table Of Contents",
+              "displayName": "Table Of Contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -154,
+        2060
+      ],
+      "id": "ebec841d-d1f8-44cf-98e8-1f0a9ca0b2e6",
+      "name": "Google Sheets5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"topic_number\": 1,\n    \"topic\": \"Water Scarcity in Africa: Everything You Need to Know\",\n    \"content\": \"1 in 3 African citizens are impacted by water scarcity. 400 million people in sub-Saharan Africa lack access to basic drinking water. Citizens in sub-Saharan Africa travel 30 minutes on average daily to access water. [...] Water scarcity in Africa is a dire situation, and is only getting worse. As Africa’s population continues to grow and climate change continues to rob the continent of the finite resource, it is predicted that by 2025, close to 230 million Africans will be facing water scarcity, and up to 460 million will be living in water-stressed areas.\"\n  },\n  {\n    \"topic_number\": 2,\n    \"topic\": \"Understanding responses to climate-related water scarcity in Africa\",\n    \"content\": \"In sub-Saharan Africa, the impacts of water scarcity threaten livelihoods and wellbeing across the continent and are driving a broad range\"\n  },\n  {\n    \"topic_number\": 3,\n    \"topic\": \"Water woes: 13 undeniable facts about Africa's water scarcity\",\n    \"content\": \"Roughly two-thirds of Africa is categorised as arid or semi-arid, despite the continent possessing close to 9% of global freshwater resources. [...] Girls and women in Sub-Saharan Africa were spending an estimated 40 billion hours annually collecting water. [...] Over 90% of the continent’s population faces water insecurity today.\"\n  }\n]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        2580
+      ],
+      "id": "03fe004e-3eda-4682-8893-6402908777c7",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.results }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Output the following as a JSON object and add a serial number for each one."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -608,
+        2360
+      ],
+      "id": "ddf97808-c4ee-42a0-9c89-231be897422a",
+      "name": "Split Tavily Response2"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('Deep Research Areas').item.json.output.title }}",
+            "Chapter 3 Content": "={{ $('Write Section  ').item.json.text }}",
+            "Chapter 3 Content 2": "={{ $('Write Section 7').item.json.text }}",
+            "Chapter 3 Content 3": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Sources",
+              "displayName": "Chapter 1 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content",
+              "displayName": "Chapter 1 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 2",
+              "displayName": "Chapter 1 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 3",
+              "displayName": "Chapter 1 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Sources",
+              "displayName": "Chapter 2 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 2 Content",
+              "displayName": "Chapter 2 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 2",
+              "displayName": "Chapter 2 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 3",
+              "displayName": "Chapter 2 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Sources",
+              "displayName": "Chapter 3 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Chapter 3 Content",
+              "displayName": "Chapter 3 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 2",
+              "displayName": "Chapter 3 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 3",
+              "displayName": "Chapter 3 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conclusion",
+              "displayName": "Conclusion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Table Of Contents",
+              "displayName": "Table Of Contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        2360
+      ],
+      "id": "5fb111b7-7b62-4231-9d1e-9571f942bf3a",
+      "name": "Google Sheets6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $json.output[0].topic }}\n{{ $json.output[0].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $json.output[1].topic }}\n{{ $json.output[1].content }}\n\n{{ $json.output[2].topic }}\n{{ $json.output[2].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -232,
+        2360
+      ],
+      "id": "5929a4ca-f87e-4298-87a7-165a69e549f2",
+      "name": "Write Section  "
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $('Split Tavily Response2').item.json.output[2].topic }}\n{{ $('Split Tavily Response2').item.json.output[2].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $('Split Tavily Response2').item.json.output[1].topic }}\n{{ $('Split Tavily Response2').item.json.output[1].content }}\n\n{{ $('Split Tavily Response2').item.json.output[0].topic }}\n{{ $('Split Tavily Response2').item.json.output[0].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        520,
+        2360
+      ],
+      "id": "dd5408a5-f5c2-4fcb-802d-ab3d2994c9e0",
+      "name": "Write Section "
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the topic we're writing about:\n\n{{ $('Split Tavily Response2').item.json.output[1].topic }}\n{{ $('Split Tavily Response2').item.json.output[1].content }}\n\nThese are other topics to follow in other secionts, so avoid repeating anything that may come earlier or later:\n\n{{ $('Split Tavily Response2').item.json.output[0].topic }}\n{{ $('Split Tavily Response2').item.json.output[0].content }}\n\n{{ $('Split Tavily Response2').item.json.output[2].topic }}\n{{ $('Split Tavily Response2').item.json.output[2].content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a research assistant writing a highly in-depth section of a structured research paper. I have provided you with the information in the user message. Follow the instructions below carefully:\n\nInstructions:\n1. Generate a section title based on the provided one and output as a <h3> heading: \"{section_title}\"\n2. Beneath the <h3>, as many paragraphs as needed wrapped in <p> tags"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        144,
+        2360
+      ],
+      "id": "322e399e-3bd3-415d-8bdb-bba8ba7520a8",
+      "name": "Write Section 7"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('Deep Research Areas').item.json.output.title }}",
+            "Conclusion": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Sources",
+              "displayName": "Chapter 1 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content",
+              "displayName": "Chapter 1 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 2",
+              "displayName": "Chapter 1 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 1 Content 3",
+              "displayName": "Chapter 1 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Sources",
+              "displayName": "Chapter 2 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content",
+              "displayName": "Chapter 2 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 2",
+              "displayName": "Chapter 2 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 2 Content 3",
+              "displayName": "Chapter 2 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Sources",
+              "displayName": "Chapter 3 Sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content",
+              "displayName": "Chapter 3 Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 2",
+              "displayName": "Chapter 3 Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Chapter 3 Content 3",
+              "displayName": "Chapter 3 Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conclusion",
+              "displayName": "Conclusion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Table Of Contents",
+              "displayName": "Table Of Contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        740,
+        1360
+      ],
+      "id": "538e8b22-9c1c-4b9e-b37c-68c20a57bd65",
+      "name": "Google Sheets7",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1116,
+        1760
+      ],
+      "id": "e1a9ce3e-2e8d-4cb8-ace8-c8310efc670f",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Title",
+              "lookupValue": "={{ $json.data[0].Title }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1556,
+        1760
+      ],
+      "id": "6b8664ee-e975-4742-9cd2-d1e41c28f0fc",
+      "name": "Google Sheets8",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a research assistant tasked with writing the final conclusion section of a structured research paper.\n\nInstructions:\n1. Use the heading <h2> with the title: \"Conclusion\"\n2. Under the heading, write one or more <p> tags with a compelling, well-written summary of the article’s key points and implications.\n3. Ensure the tone is professional, insightful, and encourages reflection or further research.\n4. Wrap the whole HTML in a div with a grey background, rounded corners, and a box shadow.\n\nRequirements:\n- Output only the HTML for the conclusion section.\n- Write in a clear and engaging academic style suitable for a research paper.\n- Do not include other sections of the article.\n- Format all output using valid, clean HTML.\n\nOptional Guidance (for structure):\n- Begin by restating the significance of the issue\n- Recap key insights from the research (generalized, no specific stats)\n- End with a thoughtful remark, recommendation, or open-ended insight\n\nHere's a high level overview of the content:\n{{ $('Deep Research Areas').item.json.output.title }}\n{{ $json.query }}\n{{ $json.answer }}\n{{ $json.results[0].content }}\n{{ $json.results[1].content }}\n{{ $json.results[2].content }}\n{{ $json.query }}\n{{ $json.answer }}\n{{ $json.results[0].content }}\n{{ $json.results[1].content }}\n{{ $json.results[2].content }}\n{{ $json.query }}\n{{ $json.answer }}\n{{ $json.results[0].content }}\n{{ $json.results[1].content }}\n{{ $json.results[2].content }}\n\nIt is vital to my career that you start directly with the opening <div> tag and do not output '''html or anything of the sort."
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        300,
+        1260
+      ],
+      "id": "94af5be8-47c3-443f-a901-d294f67d424a",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json.Title }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>{{ $json.Title }}</h1>\n    {{ $json.Introduction }}\n    <h2>Chapter 1</h2>\n    {{ $json['Chapter 1 Sources'] }}\n    {{ $json['Chapter 1 Content'] }}\n    {{ $json['Chapter 1 Content 2'] }}\n    {{ $json['Chapter 1 Content 3'] }}\n    <h2>Chapter 2</h2>\n    {{ $json['Chapter 2 Sources'] }}\n    {{ $json['Chapter 2 Content'] }}\n    {{ $json['Chapter 2 Content 2'] }}\n    {{ $json['Chapter 2 Content 3'] }}\n    <h2>Chapter 3</h2>\n    {{ $json['Chapter 3 Sources'] }}\n    {{ $json['Chapter 3 Content'] }}\n    {{ $json['Chapter 3 Content 2'] }}\n    {{ $json['Chapter 3 Content 3'] }}\n    {{ $json.Conclusion }}\n    \n  </div>\n</body>\n</html>\n\n<style>\n.container {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 8px;\n}\n\nh1 {\n  color: #ff6d5a;\n  font-size: 24px;\n  font-weight: bold;\n  padding: 8px;\n}\n\nh2 {\n  color: #909399;\n  font-size: 18px;\n  font-weight: bold;\n  padding: 8px;\n}\n</style>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1776,
+        1760
+      ],
+      "id": "74ad2996-e38b-4589-b2d8-3689de8cb860",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdfshift.io/v3/convert/pdf",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "source",
+              "value": "={{ $json.html }}"
+            },
+            {
+              "name": "margin",
+              "value": "30px 30px 30px 30px"
+            },
+            {
+              "name": "sandbox",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1996,
+        1760
+      ],
+      "id": "b72b6825-7162-4071-9a70-f55b908d3307",
+      "name": "HTTP Request3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hA9cCRJs1XF7rFm1",
+          "name": "PDFShift"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1336,
+        1760
+      ],
+      "id": "c8ba774b-ea84-48df-82c2-aed01190840d",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Alright, let me do some in-depth research on {{ $('Deep Research Areas').item.json.output.topic }} and get back to you shortly.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1268,
+        1310
+      ],
+      "id": "e673de12-63e3-47ee-8f2b-d88892de8939",
+      "name": "Telegram",
+      "webhookId": "826a48ec-d562-41a6-a1dc-e8d27c33c379",
+      "credentials": {
+        "telegramApi": {
+          "id": "LoRlZI8zl6IOo4zl",
+          "name": "Research Reports"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "I've also added the info to your second brain."
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2216,
+        1560
+      ],
+      "id": "466f05ff-ce90-4b62-83ea-b93ab5e13d1f",
+      "name": "Telegram1",
+      "webhookId": "c58feb48-4c99-4c44-b038-67725b140df3",
+      "credentials": {
+        "telegramApi": {
+          "id": "LoRlZI8zl6IOo4zl",
+          "name": "Research Reports"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs",
+          "mode": "list",
+          "cachedResultName": "deep research",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2064889604,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cBajJ5TLaIrJq3McGJLo3wk1sINSeD2kcUU3uPhbffs/edit#gid=2064889604"
+        },
+        "startIndex": "={{ $('Google Sheets8').item.json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2574,
+        1560
+      ],
+      "id": "85f2df02-e049-4572-8e7a-82d43fd1eed9",
+      "name": "Google Sheets9",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.2,
+      "position": [
+        2452,
+        1960
+      ],
+      "id": "42884ae8-d5f2-4065-9228-a9a3c2de807e",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "XTxSOWcdEtvv9IEk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2260,
+        2180
+      ],
+      "id": "aa923d99-0759-4958-b3f0-8e79850636ef",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{$json.text}}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        2556,
+        2182.5
+      ],
+      "id": "cc080490-2e0d-4109-b5a0-1ec5d1650262",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        2460,
+        2340
+      ],
+      "id": "f47c5605-b7be-4f2b-a674-b36fc1a5de86",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2216,
+        1960
+      ],
+      "id": "0aeb2dee-57ea-4d86-9da1-445de189cc46",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "85a64e3f-1efd-49e6-a754-babd5138a72b",
+              "leftValue": "={{ $json.message.from.username }}",
+              "rightValue": "shab354",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -3320,
+        680
+      ],
+      "id": "22fa811f-f9ee-42be-af09-248f988224c8",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant. Use the Supabase tool to find information about my query, retrieve that information, and use it to answer my question. Extrapolate and infer where needed.\n\nIf you don’t retrieve a suitable response, just acknowledge that this information is not available.\n\nWhen relevant information is only partially matched, infer meaning or draw parallels using context, synonyms, or related domains. Provide helpful and accurate answers even when exact matches are not found.\n\nExamples of Extrapolation and Inference:\n\t1.\tParenting / Digital Wellbeing\nQuery: “Is YouTube harmful for kids?”\nRetrieved Info: Documents discuss the impact of social media on children’s attention span and self-esteem.\nExpected Behavior: The agent should infer that YouTube is a type of social media and apply the findings about social media broadly to YouTube usage among children.\n\t2.\tHealth / Nutrition\nQuery: “Is quinoa better than white rice for weight loss?”\nRetrieved Info: Content compares whole grains to refined grains in terms of fiber content and glycemic index.\nExpected Behavior: The agent should recognize quinoa as a whole grain and white rice as refined, and apply the broader conclusions accordingly.\n\t3.\tTechnology / Cybersecurity\nQuery: “How do zero-trust architectures help in remote work security?”\nRetrieved Info: Documents explain zero-trust models in cloud computing and principles like identity verification and least privilege.\nExpected Behavior: The assistant should extrapolate these concepts to the context of remote work, explaining how zero-trust helps secure remote access.\n\t4.\tBusiness / Marketing\nQuery: “Are influencer campaigns worth it for SaaS companies?”\nRetrieved Info: Articles describe ROI of influencer marketing in e-commerce and brand building.\nExpected Behavior: The model should infer similarities in brand awareness and customer acquisition strategies between SaaS and e-commerce, providing a reasoned answer.\n\t5.\tEducation / Learning Strategies\nQuery: “What’s the best way to teach algebra to a visual learner?”\nRetrieved Info: Notes describe effective methods for visual learners using diagrams and patterns in geometry.\nExpected Behavior: The agent should generalize that visual learners benefit from spatial representations and apply that logic to algebra through graphs, visual equations, etc."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -2100,
+        260
+      ],
+      "id": "7b8c8e87-6ded-4fe8-b389-32b36c595fca",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "documents",
+        "toolDescription": "retrieve data from supabase vector store",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.2,
+      "position": [
+        -1940,
+        500
+      ],
+      "id": "302bcb8e-4da5-4919-a705-d7efb84e33da",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "XTxSOWcdEtvv9IEk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2080,
+        620
+      ],
+      "id": "9ecd7c61-3907-4973-8f25-d330dd6de86e",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Filter1').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1620,
+        260
+      ],
+      "id": "c99f4df6-22bf-4630-86c1-d8f084a4fe56",
+      "name": "Telegram2",
+      "webhookId": "2c9274eb-a0fa-4a90-890c-0669b4f6ca0d",
+      "credentials": {
+        "telegramApi": {
+          "id": "LoRlZI8zl6IOo4zl",
+          "name": "Research Reports"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Deep Research Retrieval",
+        "height": 740,
+        "width": 1280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2620,
+        120
+      ],
+      "typeVersion": 1,
+      "id": "01e1d8c7-57f8-4aab-ba4e-dd5ade31ac97",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -2340,
+        1560
+      ],
+      "id": "30775c7d-f79f-42e6-9c05-9607c92e8780",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "iUN7fOxjLX5TOlnv",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -2280,
+        540
+      ],
+      "id": "8581a42f-67b4-43a1-a3e1-747227038365",
+      "name": "DeepSeek Chat Model1",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "iUN7fOxjLX5TOlnv",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        80,
+        1560
+      ],
+      "id": "b7820fb6-e64e-422f-9149-1463887a5c41",
+      "name": "DeepSeek Chat Model2",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "iUN7fOxjLX5TOlnv",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "deep research report",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "494b6bd8-3be5-4922-b58d-f69f84c0549c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Report"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2960,
+        1200
+      ],
+      "id": "33bf1fa8-6785-4013-b418-e0132677d234",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3620,
+        680
+      ],
+      "id": "83d1940b-0b4e-4f08-b38a-eafcdebacdb4",
+      "name": "Telegram Trigger",
+      "webhookId": "5f9383dc-1187-4d84-bece-904a08f9e268",
+      "credentials": {
+        "telegramApi": {
+          "id": "LoRlZI8zl6IOo4zl",
+          "name": "Research Reports"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 405388777,
+          "message": {
+            "message_id": 4,
+            "from": {
+              "id": 5675741296,
+              "is_bot": false,
+              "first_name": "Sh",
+              "last_name": "ab",
+              "username": "shab354",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 5675741296,
+              "first_name": "Sh",
+              "last_name": "ab",
+              "username": "shab354",
+              "type": "private"
+            },
+            "date": 1749528881,
+            "text": "create a deep research report on the benefits of a high protein breakfast"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Deep Research Areas",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deep Research Areas": {
+      "main": [
+        [
+          {
+            "node": "Generate Intro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Generate Sources List",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Tavily Response",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Intro": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Sources List": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Split Tavily Response",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Tavily Response": {
+      "main": [
+        [
+          {
+            "node": "Write Section 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section 1": {
+      "main": [
+        [
+          {
+            "node": "Write Section 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section 2": {
+      "main": [
+        [
+          {
+            "node": "Write Section 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section 3": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Generate Sources List1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Tavily Response1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Sources List1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Split Tavily Response1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Tavily Response1": {
+      "main": [
+        [
+          {
+            "node": "Write Section  4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section  4": {
+      "main": [
+        [
+          {
+            "node": "Write Section 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section 6": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section 5": {
+      "main": [
+        [
+          {
+            "node": "Write Section 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Generate Sources List2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Tavily Response2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Sources List2": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Split Tavily Response2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Tavily Response2": {
+      "main": [
+        [
+          {
+            "node": "Write Section  ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section  ": {
+      "main": [
+        [
+          {
+            "node": "Write Section 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section ": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section 7": {
+      "main": [
+        [
+          {
+            "node": "Write Section ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets4": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Google Sheets6": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets8": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets9": {
+      "main": [
+        []
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        []
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Deep Research Areas",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate Intro",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Split Tavily Response",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section 1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section 2",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section 3",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Split Tavily Response1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section  4",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section 5",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section 6",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Split Tavily Response2",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section  ",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section 7",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Section ",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Deep Research Areas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2223af0b-b74c-4c0e-b1fb-398b684cc465",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8d903bf41171a711206c3bb74b40015823841bf2b93e148da68e764370f1965"
+  },
+  "id": "akyyYsLBCpKwFkZV",
+  "tags": []
+}
