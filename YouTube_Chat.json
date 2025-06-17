@@ -1,0 +1,1067 @@
+{
+  "name": "YouTube Chat",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Run actor",
+        "actorId": {
+          "__rl": true,
+          "value": "67Q6fmd8iedTVcCwY",
+          "mode": "list",
+          "cachedResultName": "youtube-channel-scraper",
+          "cachedResultUrl": "https://console.apify.com/actors/undefined/input"
+        },
+        "memory": 512,
+        "maxItems": null,
+        "build": "",
+        "waitForFinish": null,
+        "webhooks": "",
+        "useCustomBody": true,
+        "customBody": "{\n    \"maxResultStreams\": 0,\n    \"maxResults\": 1000,\n    \"maxResultsShorts\": 0,\n    \"startUrls\": [\n        {\n            \"url\": \"https://www.youtube.com/@AlexHormozi\",\n            \"method\": \"GET\"\n        }\n    ]\n}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        -125
+      ],
+      "id": "835453e3-6fac-445f-bdde-2c10f88f3035",
+      "name": "Apify",
+      "credentials": {
+        "apifyApi": {
+          "id": "dOvxG4L7tQy6NUZw",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Get run",
+        "actorId": {
+          "__rl": true,
+          "value": "67Q6fmd8iedTVcCwY",
+          "mode": "list",
+          "cachedResultName": "youtube-channel-scraper",
+          "cachedResultUrl": "https://console.apify.com/actors/undefined/input"
+        },
+        "runId": {
+          "__rl": true,
+          "value": "={{ $json.data.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        140,
+        -200
+      ],
+      "id": "671f0acf-0252-4f40-bbd1-52ef1fa63f73",
+      "name": "Apify1",
+      "credentials": {
+        "apifyApi": {
+          "id": "dOvxG4L7tQy6NUZw",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "operation": "Get items",
+        "datasetId": "={{ $('If').item.json.data.defaultDatasetId }}",
+        "limit": null,
+        "fields": "",
+        "omit": "",
+        "unwind": "",
+        "flatten": "",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        580,
+        -125
+      ],
+      "id": "ff2d271a-d48e-4a09-aaa3-d0d10706291c",
+      "name": "Apify2",
+      "credentials": {
+        "apifyApi": {
+          "id": "dOvxG4L7tQy6NUZw",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -125
+      ],
+      "id": "bd95ed8c-564a-4d1e-874d-e8cacd608a09",
+      "name": "Wait",
+      "webhookId": "a40b4103-8c69-41df-ad09-03bfbb5b948b"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6ce547fe-2eae-4f1d-9a4b-31c951ecd472",
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "SUCCEEDED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        -125
+      ],
+      "id": "ccd8afb9-f81d-4a3a-b562-9428fa734692",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -125
+      ],
+      "id": "ed11b8f1-a8ed-4a04-88dc-36be2fd6de8a",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw",
+          "mode": "list",
+          "cachedResultName": "Alex Hormozi Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video URL": "={{ $json.url }}",
+            "Video Title": "={{ $json.title }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Length",
+              "displayName": "Video Length",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Done",
+              "displayName": "Done",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1020,
+        -125
+      ],
+      "id": "2f82dd14-ac49-461f-8118-7a19103fc9d4",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Get Videos",
+        "height": 440,
+        "width": 2100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -600,
+        -300
+      ],
+      "typeVersion": 1,
+      "id": "74d43233-5126-42dd-af16-2f89d22aa726",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Get Transcripts",
+        "height": 500,
+        "width": 2100,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -600,
+        180
+      ],
+      "typeVersion": 1,
+      "id": "87c2db13-82d9-4730-9d0f-3f9bb73e7813",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw",
+          "mode": "list",
+          "cachedResultName": "Alex Hormozi Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Done"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -280,
+        260
+      ],
+      "id": "f95d687d-6618-4d8c-9a18-dabf9397a483",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -20,
+        260
+      ],
+      "id": "0e006512-e046-4c7c-93d1-ca22eb77065d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Run actor",
+        "actorId": {
+          "__rl": true,
+          "value": "dB9f4B02ocpTICIEY",
+          "mode": "list",
+          "cachedResultName": "Youtube-Transcript-Scraper-1",
+          "cachedResultUrl": "https://console.apify.com/actors/undefined/input"
+        },
+        "memory": 512,
+        "maxItems": null,
+        "build": "",
+        "waitForFinish": null,
+        "webhooks": "",
+        "useCustomBody": true,
+        "customBody": "={\n    \"includeTimestamps\": \"No\",\n    \"language\": \"Default\",\n    \"startUrls\": [\n        \"{{ $json['Video URL'] }}\"\n    ]\n}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        240,
+        260
+      ],
+      "id": "4de09c5d-fa3c-4f4d-9aac-c9b846da8d83",
+      "name": "Apify3",
+      "credentials": {
+        "apifyApi": {
+          "id": "dOvxG4L7tQy6NUZw",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        240
+      ],
+      "id": "e89c1f34-e87e-472f-9909-30c02ea87c0a",
+      "name": "Wait1",
+      "webhookId": "a14e76d2-7b98-4361-bcaa-e6ebb8a185fb"
+    },
+    {
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Get run",
+        "actorId": {
+          "__rl": true,
+          "value": "dB9f4B02ocpTICIEY",
+          "mode": "list",
+          "cachedResultName": "Youtube-Transcript-Scraper-1",
+          "cachedResultUrl": "https://console.apify.com/actors/undefined/input"
+        },
+        "runId": {
+          "__rl": true,
+          "value": "={{ $json.data.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        600,
+        240
+      ],
+      "id": "e8f97f11-f9dd-4d88-8cc1-f751fdb6c58e",
+      "name": "Apify4",
+      "credentials": {
+        "apifyApi": {
+          "id": "dOvxG4L7tQy6NUZw",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "eeb12e34-4724-4fa1-9f64-76a6fb98eb96",
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "SUCCEEDED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        780,
+        220
+      ],
+      "id": "ffc60433-dd65-4cfe-b4ba-b0cd03564420",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "operation": "Get items",
+        "datasetId": "={{ $json.data.defaultDatasetId }}",
+        "limit": null,
+        "fields": "",
+        "omit": "",
+        "unwind": "",
+        "flatten": "",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        940,
+        220
+      ],
+      "id": "56c61ae7-c863-48ec-be7c-031c34fb6d49",
+      "name": "Apify5",
+      "credentials": {
+        "apifyApi": {
+          "id": "dOvxG4L7tQy6NUZw",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        220
+      ],
+      "id": "011f9c7e-bde6-4bb2-8130-55a6271562c1",
+      "name": "Supabase Vector Store",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "Uhj9JmHtVGpZzUIS",
+          "name": "Supabase Hormozi Table"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data[0].videoTitle }}\n{{ $json.data[0].transcript }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        420
+      ],
+      "id": "4d839721-f677-4d45-8ecf-e0376d02b6f0",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        560
+      ],
+      "id": "a0fd303f-6a91-4359-a40b-d89db4d3057d",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        980,
+        460
+      ],
+      "id": "f165b20f-b095-4db2-8368-a142badba6a8",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw",
+          "mode": "list",
+          "cachedResultName": "Alex Hormozi Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XICKM72so1vGM2wkiaCiyV6MclwgTJgvWV4KGlcudmw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video URL": "={{ $('Apify5').item.json.data[0].url }}",
+            "Done": "Yes"
+          },
+          "matchingColumns": [
+            "Video URL"
+          ],
+          "schema": [
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video Length",
+              "displayName": "Video Length",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Done",
+              "displayName": "Done",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        740,
+        480
+      ],
+      "id": "ac6372a7-cf8a-49a9-ae58-c43bdd3ba9e2",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Chatbot",
+        "height": 380,
+        "width": 2100,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -600,
+        720
+      ],
+      "typeVersion": 1,
+      "id": "261cda07-76ea-458f-b5ac-6a81e090dda3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Okay — how can I help?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -440,
+        840
+      ],
+      "id": "a9cc15bf-751c-4b46-b34e-04a0148323b0",
+      "name": "When chat message received",
+      "webhookId": "dedf2815-febc-4d46-95ac-3d57877d7bd4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant and you are role playing as Alex Hormozi, a master at lead gen, sales, and business. Answer every question as Alex Hormozi.\n\nYou have access to a vector store (use the tool) with all of Alex Hormozi's YouTube transcripts. You must use the vector store tool to\n\n1) answer every prompt (call the vector store every time)\n2) reply in Alex Hormozi's talking style and tone\n\nRemember to extrapolate where necessary. End each response with a question to further the discussion.\n\n✅ Examples of Valid Extrapolations\n\n🔄 1. Selling a Service That’s Not in the Transcripts\n\nUser asks: “How should I sell high-ticket coaching for artists?”\nVector store only has: Advice on selling fitness coaching and agency retainers.\nExtrapolation logic:\n\n\t•\tBoth are service businesses.\n\t•\tHormozi often says: “The rules for selling are the same. It’s just belief, value, and trust.”\n\t•\tSo the assistant can say:\n“It doesn’t matter if it’s fitness, marketing, or painting — the core is this: you need to find starving artists with money, show them that your coaching gets them more of what they want (attention, sales, creative freedom), and remove risk. That’s it.”\n\n🧠 2. Mindset for Cold Outreach in a New Niche\n\nUser asks: “How do I overcome fear of reaching out to investors?”\nVector store contains: Clips of Hormozi talking about cold outreach for clients.\nExtrapolation logic:\n\n\t•\tHormozi talks about fear being a proxy for lack of reps.\n\t•\tHe says: “Do it a hundred times and you’ll stop being scared.”\n\t•\tAssistant can reply:\n“Scared of outreach? Good. That’s how you know it matters. Hormozi says: your feelings don’t matter — reps do. Do 100 investor DMs before judging yourself.”\n\n💰 3. Pricing a Product Not Mentioned\n\nUser asks: “How should I price my SaaS tool for dentists?”\nVector store contains: Pricing advice for courses and B2B services.\nExtrapolation logic:\n\n\t•\tHormozi says: “Price is what you charge. Value is what they get. The bigger the delta, the better.”\n\t•\tHe also says: “Price based on the problem, not the cost.”\n\t•\tAssistant can say:\n“If your tool saves a dentist $10k/month in missed bookings, you can easily charge $1k. Don’t price based on what it costs you — price based on what it saves them.”\n\n🔁 4. Funnels or Ads for a Product Not Discussed\n\nUser asks: “What funnel should I use to sell a supplement?”\nVector store contains: Gym Launch sales funnels, not supplements.\nExtrapolation logic:\n\n\t•\tHormozi breaks funnels down to: hook → story → offer → proof → action.\n\t•\tAssistant can say:\n“The product doesn’t matter. What matters is: do they believe it’ll work for them? Use a hook that speaks to their pain, a story that proves credibility, and an offer that makes them feel stupid for saying no.”"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        320,
+        740
+      ],
+      "id": "7721b813-7436-44a8-b894-883a26600422",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        960
+      ],
+      "id": "f25ab7e6-ad7f-41b8-9bcd-5110399aceda",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "documents",
+        "toolDescription": "find content from hormozi knowledge bank",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        880
+      ],
+      "id": "0ca676cf-0713-4976-9cac-66c9b6df3563",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Uhj9JmHtVGpZzUIS",
+          "name": "Supabase Hormozi Table"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        980
+      ],
+      "id": "dd35e2b7-7cde-43bc-bdee-e45812910f1a",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        420,
+        960
+      ],
+      "id": "67ce8a17-cd4c-48b5-a3b9-291717065c08",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        260
+      ],
+      "id": "31182659-5081-4758-8009-ff9d1d2bbe30",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Apify": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Apify1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Apify2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify2": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Apify3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify3": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Apify4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify4": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Apify5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify5": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ac5f6804-74d3-43a5-951a-d5108b0e69dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8d903bf41171a711206c3bb74b40015823841bf2b93e148da68e764370f1965"
+  },
+  "id": "fa3qo3xN8g32502Q",
+  "tags": []
+}
