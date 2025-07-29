@@ -1,0 +1,1038 @@
+{
+  "name": "ASMR Videos",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        416,
+        128
+      ],
+      "id": "169c7bd9-e10c-4d51-8d48-b2d7f5c32c75",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1S3RVuKpTiM_VJGXGtkDktUAQqUrsFecY2pUrlPG0pb8",
+          "mode": "list",
+          "cachedResultName": "asmr tiktok videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S3RVuKpTiM_VJGXGtkDktUAQqUrsFecY2pUrlPG0pb8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 136000946,
+          "mode": "list",
+          "cachedResultName": "Video Ideas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S3RVuKpTiM_VJGXGtkDktUAQqUrsFecY2pUrlPG0pb8/edit#gid=136000946"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        640,
+        128
+      ],
+      "id": "443af122-9b00-4194-8388-c76bb29117db",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json.ID }} - {{ $json.Concept }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Cay44vDNFZ_zELmV9RsdHTv6UFTAszMc",
+          "mode": "list",
+          "cachedResultName": "Before It Changed Everything Videos",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Cay44vDNFZ_zELmV9RsdHTv6UFTAszMc"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        864,
+        128
+      ],
+      "id": "9150c9bc-0ec8-4720-b301-7a7877ad554f",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "piKlm8QqgarmzB8j",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "share",
+        "folderNoRootId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "anyone",
+            "allowFileDiscovery": true
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1088,
+        128
+      ],
+      "id": "4b9b9cda-fcf1-419c-8a02-453cce48f917",
+      "name": "Share folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "piKlm8QqgarmzB8j",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Below is the format for a video generation prompt. I will provide you with an idea for three scenes. Based on those scenes, output three video generation prompts.\n\n################\n\nPrompt Sample:\nEnvironment & Setting: A minimalist setting. The subject rests on a [SURFACE_DESCRIPTION]. Example: a dark, reclaimed oak butcher block with a matte finish and visible wood grain. The background is a [BACKGROUND_DESCRIPTION]. Example: a clean, completely out-of-focus dark grey wall, creating a shallow depth of field. Lighting Setup: Consistent cinematic studio lighting. Describe the key light, fill, and mood. Example: A single, soft key light from the top-left at a 45-degree angle creates soft but defined shadows to the bottom-right. A very subtle bounce light from the front-right gently fills in the shadows, preventing them from being pure black. The overall mood is dramatic and focused. Core Action: [Describe only what happens in these 8 seconds.] Style & Camera: Cinematic macro shot, 4K resolution, hyper-realistic detail. The camera motion is [CAMERA_MOTION_CHOICE]. The style is clean, polished, and mesmerizing. Negative Prompts: no blurry, no grainy, no shaky camera, no changing light, no background detail, no watermarks, no text.\n\n###############\n\nBackground setup(should be consistent across all three scenes):\n{{ $('Get row(s) in sheet').item.json['Scene Consistency Block (Static Elements)'] }}\n\nScene 1:\n{{ $('Get row(s) in sheet').item.json['Scene 1 Action (0-8s)'] }}\n\nScene 2:\n{{ $('Get row(s) in sheet').item.json['Scene 2 Action (8-16s)'] }}\n\nScene 3:\n{{ $('Get row(s) in sheet').item.json['Scene 3 Action (16-24s)'] }}\n\n#################\n\nOutput format - make sure each object is FULLY VALID JSON(no quotation marks, or special characters, etc).\n{\n\"scene_1\": \"entire prompt in one go valid JSON\",\n\"scene_2\": \"entire prompt in one go valid JSON\",\n\"scene_3\": \"entire prompt in one go valid JSON\"\n}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1312,
+        128
+      ],
+      "id": "72d38528-40dd-44b4-9b07-7aa9cf02a131",
+      "name": "Generate Prompts",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "choices[0].message.content",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        128
+      ],
+      "id": "46d8c2d8-bef7-459f-b3ca-c6210c207f50",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kie.ai/api/v1/veo/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"{{ $json['choices[0].message.content'] }}\",\n  \"model\": \"veo3_fast\",\n  \"aspectRatio\": \"9:16\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1936,
+        128
+      ],
+      "id": "31c90eda-938f-428d-9255-0a022200a260",
+      "name": "Generate Video",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "oXuPKE3jjqgoyzx9",
+          "name": "Kie AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2160,
+        128
+      ],
+      "id": "8ac9355c-0aeb-4626-a958-a71b58ba8876",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.data.successFlag }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "305dc45a-0e7f-4aae-bacc-98614464c50a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "In Progress"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "791cfe34-9146-4318-990e-d2e0734fb191",
+                    "leftValue": "={{ $json.data.successFlag }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Succeeded"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2608,
+        16
+      ],
+      "id": "d97d73bc-2634-491b-8ce4-59cb0461142a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2832,
+        112
+      ],
+      "id": "f05b49df-42b0-4a3c-b46a-269e034a22e3",
+      "name": "Wait",
+      "webhookId": "1f2c85ec-5d3d-461f-aa1b-ecdde0ebc767"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.data.response.resultUrls[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2832,
+        304
+      ],
+      "id": "d60f8cf1-c5b8-494d-94c2-aad06c512979",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "name": "=scene_{{ $runIndex }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3056,
+        400
+      ],
+      "id": "2e191142-b19f-4c38-b1ae-280425d0c40c",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "piKlm8QqgarmzB8j",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2832,
+        -112
+      ],
+      "id": "5e528c7e-20ef-4d40-b9b2-80d91f38bb7c",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "url": "https://api.kie.ai/api/v1/veo/record-info",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "taskId",
+              "value": "={{ $json.data.taskId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2384,
+        128
+      ],
+      "id": "35540bf6-cc90-4a8d-95a6-f728cb285109",
+      "name": "Check Status",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "oXuPKE3jjqgoyzx9",
+          "name": "Kie AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2384,
+        -304
+      ],
+      "id": "98c7ea55-e5f4-44b7-8463-7253d08e0cef",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $('Get row(s) in sheet').item.json.Concept }}",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1Cay44vDNFZ_zELmV9RsdHTv6UFTAszMc",
+            "mode": "list",
+            "cachedResultName": "Before It Changed Everything Videos",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1Cay44vDNFZ_zELmV9RsdHTv6UFTAszMc"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2608,
+        -304
+      ],
+      "id": "115e2985-5793-4225-a09a-578dc27ca0a6",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "piKlm8QqgarmzB8j",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "whatToSearch": "files"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2832,
+        -304
+      ],
+      "id": "fb02caef-18d0-4cc3-a4f3-e6ab3ec2f260",
+      "name": "Search files and folders1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "piKlm8QqgarmzB8j",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3056,
+        -304
+      ],
+      "id": "c01f675e-5655-44fb-a81d-a083870597a7",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json.data;\n\nconst result = input.map(file => {\n  return {\n    json: {\n      name: file.name,\n      download_link: `https://drive.google.com/uc?export=download&id=${file.id}`\n    }\n  };\n});\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3280,
+        -304
+      ],
+      "id": "250aea7d-8002-4a1f-b431-085d3454d550",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "videoSources": {
+          "sources": [
+            {
+              "value": "={{ $json.data[2].download_link }}"
+            },
+            {
+              "value": "={{ $json.data[1].download_link }}"
+            },
+            {
+              "value": "={{ $json.data[0].download_link }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-mediafx.mediaFX",
+      "typeVersion": 1,
+      "position": [
+        3728,
+        -304
+      ],
+      "id": "f9e45d44-a03c-42d5-8a32-4819e2bc226a",
+      "name": "Merge video"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3504,
+        -304
+      ],
+      "id": "81961f38-368d-481c-946c-c2ca36e75812",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "name": "final_video.mp4",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3952,
+        -304
+      ],
+      "id": "912f9b91-35db-4057-9150-868b40f872ae",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "piKlm8QqgarmzB8j",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1S3RVuKpTiM_VJGXGtkDktUAQqUrsFecY2pUrlPG0pb8",
+          "mode": "list",
+          "cachedResultName": "asmr tiktok videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S3RVuKpTiM_VJGXGtkDktUAQqUrsFecY2pUrlPG0pb8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 136000946,
+          "mode": "list",
+          "cachedResultName": "Video Ideas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S3RVuKpTiM_VJGXGtkDktUAQqUrsFecY2pUrlPG0pb8/edit#gid=136000946"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Concept": "={{ $('Get row(s) in sheet').item.json.Concept }}",
+            "Drive Folder URL": "={{ $('Create folder').item.json.id }}",
+            "Status": "Complete"
+          },
+          "matchingColumns": [
+            "Concept"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concept",
+              "displayName": "Concept",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Scene Consistency Block (Static Elements)",
+              "displayName": "Scene Consistency Block (Static Elements)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene 1 Action (0-8s)",
+              "displayName": "Scene 1 Action (0-8s)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Scene 2 Action (8-16s)",
+              "displayName": "Scene 2 Action (8-16s)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Scene 3 Action (16-24s)",
+              "displayName": "Scene 3 Action (16-24s)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Relatable Text (for TikTok)",
+              "displayName": "Relatable Text (for TikTok)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hashtags",
+              "displayName": "Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Folder URL",
+              "displayName": "Drive Folder URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive URL Proper",
+              "displayName": "Drive URL Proper",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        4176,
+        -304
+      ],
+      "id": "978563ad-f3cf-4761-98af-864716c3232d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O5WpQz6VV2A1evBL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.upload-post.com/api/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "video",
+              "value": "={{ $('Upload file1').item.json.webContentLink }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.Concept }}"
+            },
+            {
+              "name": "user",
+              "value": "beforeitchangedeverything"
+            },
+            {
+              "name": "platform[]",
+              "value": "youtube"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4400,
+        -304
+      ],
+      "id": "134e78ce-365d-4d56-854d-5339adb66d3e",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kLoKQl92mhj4L5Ty",
+          "name": "upload post "
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Share folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share folder": {
+      "main": [
+        [
+          {
+            "node": "Generate Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Prompts": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Generate Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Merge video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge video": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7d137069-d7bd-4ed0-8516-ad6ea85cc1ce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8d903bf41171a711206c3bb74b40015823841bf2b93e148da68e764370f1965"
+  },
+  "id": "J25jbBKMa7PVfTYM",
+  "tags": []
+}
