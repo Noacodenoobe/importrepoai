@@ -1,0 +1,376 @@
+{
+  "name": "AI Project Management",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        16
+      ],
+      "id": "698a4daf-c562-4e89-9df5-853b6abc1ea8",
+      "name": "When chat message received",
+      "webhookId": "f2ae74ca-7072-43ab-8df3-d5554cfe5546"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        240
+      ],
+      "id": "10df0475-858d-452b-8d99-09d023d6140a",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KztKfqsNjNkkJM89",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        240
+      ],
+      "id": "b9b33ce7-a68d-4562-9d75-5276db4cb6fe",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        96,
+        240
+      ],
+      "id": "56c0d824-eba8-4f2f-b8da-e1c42a981688",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "resource": "project",
+        "operation": "create",
+        "name": "={{ $fromAI(\"Project_Name\") }}",
+        "workspace": "1210954859423112",
+        "team": "1210954859423114",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.asanaTool",
+      "typeVersion": 1,
+      "position": [
+        224,
+        256
+      ],
+      "id": "0278ff49-3cb3-4e86-b959-4ea3f3039f2d",
+      "name": "Create a project in Asana",
+      "credentials": {
+        "asanaApi": {
+          "id": "J2L2sS3h2ElTaKq0",
+          "name": "Asana account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workspace": "1210954859423112",
+        "name": "={{ $fromAI(\"Task_name\") }}",
+        "otherProperties": {
+          "assignee": "={{ $fromAI(\"assignee_id\") }}",
+          "due_on": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Due_On', ``, 'string') }}",
+          "notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}",
+          "projects": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Project_Names_or_IDs', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.asanaTool",
+      "typeVersion": 1,
+      "position": [
+        368,
+        256
+      ],
+      "id": "3d0c9d30-5f48-4cd9-b9f0-43960b08a030",
+      "name": "Create a task in Asana",
+      "credentials": {
+        "asanaApi": {
+          "id": "J2L2sS3h2ElTaKq0",
+          "name": "Asana account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "subtask",
+        "taskId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Parent_Task_ID', ``, 'string') }}",
+        "name": "={{ $fromAI(\"Task_name\") }}",
+        "otherProperties": {
+          "assignee": "={{ $fromAI(\"assignee_id\") }}",
+          "due_on": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Due_On', ``, 'string') }}",
+          "notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.asanaTool",
+      "typeVersion": 1,
+      "position": [
+        512,
+        256
+      ],
+      "id": "83cd62f1-f2c9-4eda-922d-b4a01486bbd4",
+      "name": "Create a subtask in Asana",
+      "credentials": {
+        "asanaApi": {
+          "id": "J2L2sS3h2ElTaKq0",
+          "name": "Asana account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "project",
+        "operation": "getAll",
+        "workspace": "1210954859423112",
+        "limit": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Limit', ``, 'number') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.asanaTool",
+      "typeVersion": 1,
+      "position": [
+        672,
+        256
+      ],
+      "id": "666af670-14ee-45e0-9228-f0a2fe469484",
+      "name": "Get many projects in Asana",
+      "credentials": {
+        "asanaApi": {
+          "id": "J2L2sS3h2ElTaKq0",
+          "name": "Asana account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        464
+      ],
+      "id": "ce9e94c6-9fd3-4d88-817f-f02e99452e73",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "getAll",
+        "workspace": "1210954859423112"
+      },
+      "type": "n8n-nodes-base.asanaTool",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        464
+      ],
+      "id": "29081453-7037-4a3a-9444-4a3b478dd49e",
+      "name": "Get many users in Asana",
+      "credentials": {
+        "asanaApi": {
+          "id": "J2L2sS3h2ElTaKq0",
+          "name": "Asana account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "AI agent to determine best user for the task",
+        "text": "=You are an HR expert and your job is to determine who to assign the given task to. Use the Asana tool to get a list of users and pass the most relevant GID as your output.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        256
+      ],
+      "id": "1e53791d-5d88-4e1e-a3fa-9f395bc59631",
+      "name": "Find user from asana"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an expert agile development consultant with extensive experience in project breakdown and sprint planning.\n\nWhen I provide you with a project, please analyze it and deliver a structured breakdown.\n\n**Initial Discovery Process:**\nStart by gathering key project details through targeted questions:\n- Project description and main objectives\n- Target audience/ICP specifics\n- Team composition and timeline constraints\n- Technical preferences and existing assets\n- Specific service offerings or features needed\n\n**Delivery Process:**\n\n**Phase 1: Project Overview & Setup**\nProvide human-readable analysis and use the Asana tool to create a project and add the milestones and risks in the project notes. The current time and date is {{ $now }}\n\n{\n  \"project\": {\n    \"name\": \"Project Name\",\n    \"description\": \"Brief description\",\n    \"estimated_duration\": \"X weeks\",\n    \"complexity\": \"Low/Medium/High\",\n    \"team_size\": X,\n    \"target_launch\": \"YYYY-MM-DD\"\n  },\n  \"milestones\": [\n    {\n      \"name\": \"Milestone Name\",\n      \"date\": \"YYYY-MM-DD\",\n      \"description\": \"Key deliverable or checkpoint\"\n    }\n  ],\n  \"risks\": [\n    {\n      \"description\": \"Risk description\",\n      \"impact\": \"High/Medium/Low\",\n      \"probability\": \"High/Medium/Low\",\n      \"mitigation\": \"Mitigation strategy\"\n    }\n  ]\n}\n\nPhase 2: Epic-by-Epic Breakdown\nAfter the user confirms Phase 1 is imported, proceed with individual epics. !Important Use the Asana Get Project tool to find the relevant project ID and add all tasks and subtasks to the project you created earlier using the Asana Create task and Create subtask tools - each epic is an Asana task and subtasks will be nested.\n\n{\n  \"epic\": {\n    \"id\": \"epic_X\",\n    \"name\": \"Epic Name\",\n    \"description\": \"Epic description\",\n    \"priority\": \"Critical/High/Medium/Low\",\n    \"estimated_effort\": \"X story points\",\n    \"sprint\": \"Sprint X\",\n    \"tasks\": [\n      {\n        \"id\": \"task_X\",\n        \"name\": \"Task Name\",\n        \"description\": \"Detailed task description with acceptance criteria\",\n        \"type\": \"Development/Design/Testing/Documentation/Content\",\n        \"priority\": \"Critical/High/Medium/Low\",\n        \"estimated_effort\": \"X hours\",\n        \"due_date\": \"YYYY-MM-DD\",\n        \"assignee\": \"Role (Developer/Sales Consultant)\",\n        \"status\": \"Not Started\",\n        \"dependencies\": [\"task_id\"],\n        \"subtasks\": [\n          {\n            \"name\": \"Subtask Name\",\n            \"description\": \"Specific actionable item\",\n            \"estimated_effort\": \"X hours\",\n            \"due_date\": \"YYYY-MM-DD\"\n          }\n        ]\n      }\n    ]\n  }\n}\nWorkflow:\n\nGather project requirements through targeted questions\nOutput Phase 1 (Project + Milestones + Risks) and use Asana tool\nWait for user confirmation of import\nOutput Epic 1 and ask \"Ready for Epic 2?\" and use Asana tool\nContinue iteratively through all epics using Asana tool\nProvide final summary and next steps\n\nGuidelines:\n\nKeep JSON outputs under token limits by breaking into logical chunks\nUse realistic timelines with buffer time built in\nClearly mark dependencies between tasks\nInclude specific acceptance criteria in task descriptions\nAssign tasks to appropriate team roles (Developer vs Sales Consultant)\n\nCommunication Style:\n\nStart with friendly, engaging tone using appropriate emojis\nAsk targeted follow-up questions to clarify scope\nProvide clear phase-by-phase progression\nConfirm user readiness before proceeding to next epic\nDo not output JSON to the user - that's just for your reference.\n\nBegin each project breakdown by gathering essential details and confirming the iterative output approach works for the user's workflow."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        192,
+        16
+      ],
+      "id": "3ca4d546-7354-470c-8ad0-67f60bad6691",
+      "name": "Project Manager"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a project in Asana": {
+      "ai_tool": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task in Asana": {
+      "ai_tool": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a subtask in Asana": {
+      "ai_tool": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many projects in Asana": {
+      "ai_tool": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Find user from asana",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many users in Asana": {
+      "ai_tool": [
+        [
+          {
+            "node": "Find user from asana",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find user from asana": {
+      "ai_tool": [
+        [
+          {
+            "node": "Project Manager",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0b02ef82-4825-4837-8ae2-80b1d6401252",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8d903bf41171a711206c3bb74b40015823841bf2b93e148da68e764370f1965"
+  },
+  "id": "E2D2reyw0C1NTOWH",
+  "tags": []
+}
