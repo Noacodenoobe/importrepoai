@@ -1,0 +1,557 @@
+{
+  "name": "AI Sub Agent Demo",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        16
+      ],
+      "id": "3ee788f2-0306-41d6-a770-94ae8f27c4fa",
+      "name": "When chat message received",
+      "webhookId": "7f042834-eaf3-4858-af7a-0366e5bc84e2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        240
+      ],
+      "id": "c6c3e021-b329-45e8-9a7d-5bf53d340df4",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KztKfqsNjNkkJM89",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        240
+      ],
+      "id": "f948de58-f150-4aed-a87f-431635270ed3",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Research AI agent that uses tavily and perplexity to get information about a topic",
+        "text": "=You are an expert at researching for writing website content and blog posts. I will provide you with a topic, and you are to use the Perplexity and Tavily tools to get relevant information and its sources, compile it into what I need to write the section of my article, and output it. It's IMPORTANT that you output the sources as well.\n\n{{ $fromAI(\"search_query\") }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        240
+      ],
+      "id": "a9d3f973-c7d6-4a7d-bdfc-6a47d1447677",
+      "name": "Research Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        448
+      ],
+      "id": "32d794b7-00c5-4067-9cd6-166f5b2876e0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Searches tavily for relevant information and sources",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $fromAI(\"search_topic\")}}\",\n  \"auto_parameters\": false,\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 3,\n  \"include_answer\": true,\n  \"include_raw_content\": true,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        448
+      ],
+      "id": "4f053191-16c6-470d-8c39-c444de4b8475",
+      "name": "Tavily Research",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ugAKuytDz61wg9ws",
+          "name": "Tavily"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        448
+      ],
+      "id": "5a0e08b4-db6b-4f62-a478-4cb240228ce6",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Research AI agent that uses tavily and perplexity to get information about a topic",
+        "text": "=You are an expert at researching for writing website content and blog posts. I will provide you with a topic, and you are to use the Perplexity tool to help me craft an engaging title and H2 - H3 structure for the blog post. Your output should be: Title, H2s and nested H3s, nothing else.\n\nThe final H2 should be a conclusion.\n\nTopic: {{ $fromAI(\"search_query\") }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        240
+      ],
+      "id": "9ccb4766-8c61-4140-ade4-add8b322fd95",
+      "name": "Titles and Structure Tool"
+    },
+    {
+      "parameters": {
+        "model": "sonar-pro",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        672,
+        448
+      ],
+      "id": "f3edb2c3-5eed-4721-804f-099f5df22289",
+      "name": "Perplexity Tool",
+      "credentials": {
+        "perplexityApi": {
+          "id": "wL705OXIfF8sibkB",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "sonar",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        352,
+        448
+      ],
+      "id": "203335d3-471a-414f-b039-c491763ee8f4",
+      "name": "Perplexity Research",
+      "credentials": {
+        "perplexityApi": {
+          "id": "wL705OXIfF8sibkB",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Write blog post section tool",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        240
+      ],
+      "id": "81159d6b-cdce-4385-9429-032a9c0b7401",
+      "name": "Write Section Tool"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        448
+      ],
+      "id": "8156236c-13d2-4c4f-a402-7b11616d8872",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an expert SEO content writer. You know how to research inch wide, mile deep, and you write insightful, well-researched, engaging, and READABLE content pieces about all topics.\n\nI will provide you with a keyword. Use the Generate Title and Structure tool to provide me with a skeleton for the article.\n\nOnce I approve, write out the blog post, section by section, using the Perplexity and Tavily research tools to get data, and the Write section tool to write out each H2 section, and importantly linking out to sources wherever relevant.\n\nThen call the Generate Image tool and get the image URL - one image per blog post, to be inserted right before the first H2\n\nDo this iteratively until your next output is a final, compiled, HTML-formatted blog post that's ready to publish.\n\nWorkflow:\n\n1) receive keyword\n2) generate title and structure and confirm with user\n3) generate introduction\n4) generate each section one-by-one\n5) Generate Image\n6) compile into ready blog post and output to user\n\nOutput format for blog post\n\n<h1>Title...</h1>\n<p>intro</p>\n<h2>heading</h2>\n<h3>heading</h3>\n<p>text</p>\netc etc"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        16
+      ],
+      "id": "a376c4b0-81b5-49ec-83fa-ae92276e2b61",
+      "name": "Blog Writer Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        448
+      ],
+      "id": "4428e627-0fdc-4303-882a-32757dd4584e",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "ybRg3lag38rmtn5D",
+          "name": "Shab OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use replicate to generate an image",
+        "method": "POST",
+        "url": "https://api.replicate.com/v1/models/black-forest-labs/flux-schnell/predictions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"input\": {\n      \"prompt\": \"{{ $fromAI(\"prompt\") }}\",\n      \"go_fast\": true,\n      \"megapixels\": \"1\",\n      \"num_outputs\": 1,\n      \"aspect_ratio\": \"1:1\",\n      \"output_format\": \"webp\",\n      \"output_quality\": 80,\n      \"num_inference_steps\": 4\n    }\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1376,
+        448
+      ],
+      "id": "39b74f8b-e7bc-4fa7-8889-324502330b9f",
+      "name": "Generate Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "sF9lQ2gNQ4fKGCox",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Check status of generated image",
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1504,
+        448
+      ],
+      "id": "08cf3f91-a5b2-44b0-8f56-1b65dd362502",
+      "name": "Check Status",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "sF9lQ2gNQ4fKGCox",
+          "name": "Replicate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "AI agent that can generate images",
+        "text": "=You are an expert at crafting prompts for AI-powered image generation models.\n\nThis is the topic my article is about: {{ $fromAI(\"topic\") }}\n\nThis is the image style:\n{{ $fromAI(\"style\") }}\n\nUse the Replicate Generate Image tool to start the image generation process. Then use the Get Image(use the urls.get field to check) and keep checking until the status is complete, and once complete, return the image URL.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        240
+      ],
+      "id": "19b142f4-cb7e-47ea-bbb6-a76992369c1c",
+      "name": "Generate Image Tool"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Blog Writer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Blog Writer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Blog Writer Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Blog Writer Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily Research": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Titles and Structure Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Titles and Structure Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Blog Writer Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Titles and Structure Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity Research": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Section Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Blog Writer Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Section Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Blog Writer Agent": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Image Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "ai_tool": [
+        [
+          {
+            "node": "Generate Image Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status": {
+      "ai_tool": [
+        [
+          {
+            "node": "Generate Image Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Blog Writer Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bbf98c9b-c2d3-412b-9010-520368fd9d54",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f8d903bf41171a711206c3bb74b40015823841bf2b93e148da68e764370f1965"
+  },
+  "id": "zPTgdHHpg9YzhQnM",
+  "tags": []
+}
