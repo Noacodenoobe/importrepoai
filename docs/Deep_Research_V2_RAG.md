@@ -1,17 +1,17 @@
-# Deep Research V2 + RAG
+# Agent głębokiego researchu V2 + RAG
 
-## Overview
-- Advanced research agent combining web search with Retrieval-Augmented Generation.
-- Utilises Supabase as a vector store for document retrieval.
-- Includes PDF ingestion and text splitting nodes to populate the knowledge base.
-- Employs DeepSeek chat models for reasoning.
+## Przegląd
+- Zaawansowany agent researchowy łączący wyszukiwanie w sieci z Retrieval-Augmented Generation.
+- Wykorzystuje Supabase jako wektorową bazę wiedzy.
+- Zawiera węzły do wczytywania plików PDF i dzielenia tekstu, aby zasilać bazę.
+- Wykorzystuje modele DeepSeek do rozumowania.
 
-## Flow
-1. A Telegram trigger forwards user messages to a `Switch` that selects the desired agent mode.
-2. Documents can be uploaded, split and embedded into Supabase for later retrieval.
-3. The `AI Agent` queries the vector store and external tools to craft a comprehensive answer.
+## Przepływ
+1. Wyzwalacz Telegrama przekazuje wiadomości do `Switch`, który wybiera odpowiedni tryb agenta.
+2. Dokumenty można przesłać, podzielić i zembedować w Supabase, aby później je wyszukiwać.
+3. `AI Agent` odpyta wektorową bazę i narzędzia zewnętrzne, aby przygotować wyczerpującą odpowiedź.
 
-## Switching to Local Models
-1. Swap the DeepSeek chat nodes with local models hosted on an OpenAI-style endpoint.
-2. For embeddings, use a local embedding model or an offline service compatible with Supabase.
-3. Ensure all credential nodes point to the local services and remove remote keys.
+## Przełączenie na modele lokalne
+1. Zamień węzły DeepSeek na lokalne modele działające na endpointzie zgodnym z OpenAI.
+2. Do embeddingów użyj lokalnego modelu lub usługi offline współpracującej z Supabase.
+3. Upewnij się, że wszystkie poświadczenia wskazują na lokalne usługi i nie zawierają zdalnych kluczy.

@@ -1,17 +1,17 @@
-# Second Brain Agent
+# Agent Drugiego Mózgu
 
-## Overview
-- Acts as a personal knowledge base using Supabase for vector storage.
-- The `Vector Store Agent` powered by OpenAI GPT-4o-mini handles add/search operations.
-- Conversation context is saved in Postgres via `Postgres Chat Memory`.
-- Integrations include Telegram and YouTube transcription to ingest content.
+## Przegląd
+- Działa jako osobista baza wiedzy, wykorzystując Supabase do przechowywania wektorów.
+- `Vector Store Agent` oparty na OpenAI GPT-4o-mini dodaje i wyszukuje informacje.
+- Kontekst rozmowy przechowywany jest w Postgresie przez `Postgres Chat Memory`.
+- Integracje obejmują Telegram oraz transkrypcję YouTube do wprowadzania treści.
 
-## Flow
-1. Incoming data is embedded and stored in Supabase.
-2. User queries trigger retrieval from the vector store.
-3. The agent composes responses using retrieved context and returns them to the user.
+## Przepływ
+1. Napływające dane są embedowane i zapisywane w Supabase.
+2. Zapytania użytkownika uruchamiają wyszukiwanie wektorowe.
+3. Agent tworzy odpowiedź na podstawie znalezionych fragmentów i odsyła ją użytkownikowi.
 
-## Switching to Local Models
-1. Replace GPT-4o-mini with a local LLM (e.g. `llama3-8b`), updating the node's model and `baseUrl`.
-2. Swap OpenAI embeddings with a local embedding model such as `text-embedding-nomic`.
-3. Update credentials to remove remote API keys and reference the local endpoints.
+## Przełączenie na modele lokalne
+1. Zamień GPT-4o-mini na lokalny LLM (np. `llama3-8b`), aktualizując model i `baseUrl` w węźle.
+2. Wymień embeddingi OpenAI na lokalny model, np. `text-embedding-nomic`.
+3. Zaktualizuj poświadczenia, aby usuwały zdalne klucze API i kierowały zapytania na lokalne endpointy.

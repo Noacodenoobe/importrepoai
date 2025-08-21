@@ -1,4 +1,4 @@
-# Local LLM Setup Guide
+# Przewodnik konfiguracji lokalnych modeli LLM
 
 ## 1. Co będziemy robić
 Ten poradnik pokazuje, jak uruchomić agentów z tego repozytorium na własnym komputerze

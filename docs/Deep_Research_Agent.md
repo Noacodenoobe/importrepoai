@@ -1,17 +1,17 @@
-# Deep Research Agent
+# Agent głębokiego researchu
 
-## Overview
-- Specialised in deep research using Perplexity's Sonar and Sonar Pro models.
-- Central `AI Agent` (OpenAI GPT-4o-mini) decides when to call each Perplexity tool.
-- Includes a `Window Buffer Memory` node to retain recent dialogue.
-- Designed for Telegram integration with an access filter.
+## Przegląd
+- Specjalizuje się w głębokim researchu z użyciem modeli Sonar i Sonar Pro od Perplexity.
+- Centralny `AI Agent` (OpenAI GPT-4o-mini) decyduje, kiedy wywołać odpowiednie narzędzie Perplexity.
+- Zawiera węzeł `Window Buffer Memory`, który przechowuje niedawny kontekst rozmowy.
+- Zaprojektowany z myślą o integracji z Telegramem i filtrem dostępu.
 
-## Flow
-1. User message arrives via Telegram and passes through an access `Filter`.
-2. The `AI Agent` analyses the query and chooses between Sonar and Sonar Pro tools.
-3. The chosen tool returns data which the agent summarises for the user.
+## Przepływ
+1. Wiadomość użytkownika dociera przez Telegram i przechodzi przez `Filter`, który sprawdza uprawnienia.
+2. `AI Agent` analizuje zapytanie i wybiera narzędzie Sonar lub Sonar Pro.
+3. Wybrane narzędzie zwraca dane, które agent streszcza dla użytkownika.
 
-## Switching to Local Models
-1. Replace the main OpenAI model with a local LLM via an OpenAI-compatible chat node.
-2. If Perplexity access is not desired, substitute the Sonar tools with local web-search or RAG tools.
-3. Update credentials to reference the local endpoint and remove API keys.
+## Przełączenie na modele lokalne
+1. Zamień główny model OpenAI na lokalny LLM, korzystając z węzła kompatybilnego z OpenAI.
+2. Jeśli nie chcesz używać Perplexity, zastąp narzędzia Sonar lokalnym wyszukiwaniem internetowym lub RAG.
+3. Zaktualizuj poświadczenia tak, aby wskazywały na lokalny endpoint i usuń klucze API.

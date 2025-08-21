@@ -1,18 +1,18 @@
-# AI Project Management Agent
+# Agent zarządzania projektami
 
-## Overview
-- Built with n8n and LangChain to manage Asana projects.
-- Uses an Anthropic Claude model as the main LLM.
-- Maintains conversation context via **Simple Memory** and leverages a **Think** tool for reasoning.
-- Includes dedicated Asana nodes for creating projects, tasks, subtasks and for user lookup.
+## Przegląd
+- Zbudowany w n8n i LangChain do obsługi projektów w Asanie.
+- Główny model LLM to Anthropic Claude.
+- Kontekst rozmowy przechowywany jest w **Simple Memory**, a narzędzie **Think** pomaga w rozumowaniu.
+- Zawiera dedykowane węzły Asany do tworzenia projektów, zadań, podzadań oraz wyszukiwania użytkowników.
 
-## Flow
-1. Chat trigger sends user input to the **Project Manager** agent.
-2. The agent decides which Asana tool to use: create project, task, subtask or find user.
-3. Conversation history is stored in **Simple Memory** to give the agent context.
+## Przepływ
+1. Wyzwalacz czatu przekazuje wiadomość do agenta **Project Manager**.
+2. Agent decyduje, którego narzędzia Asany użyć: utworzyć projekt, zadanie, podzadanie czy wyszukać użytkownika.
+3. Historia rozmowy zapisywana jest w **Simple Memory**, aby agent miał kontekst.
 
-## Switching to Local Models
-1. Run a local LLM server (e.g. LocalAI, Ollama) exposing an OpenAI-compatible `/v1` endpoint.
-2. Replace the Anthropic Claude node with an OpenAI-compatible chat node pointing at your local server.
-3. Update the node's `model` value to your chosen local model (e.g. `llama3-8b-instruct`) and set the `baseUrl` option to the local endpoint.
-4. Update credentials in n8n to remove remote API keys and reference the local server instead.
+## Przełączenie na modele lokalne
+1. Uruchom lokalny serwer LLM (np. LocalAI, Ollama) udostępniający endpoint zgodny z OpenAI `/v1`.
+2. Zamień węzeł Anthropic Claude na węzeł typu OpenAI, wskazujący na lokalny serwer.
+3. Ustaw parametr `model` na nazwę lokalnego modelu (np. `llama3-8b-instruct`) oraz `baseUrl` na adres serwera.
+4. W n8n zaktualizuj poświadczenia tak, aby nie używać kluczy API i kierować zapytania na lokalny serwer.
