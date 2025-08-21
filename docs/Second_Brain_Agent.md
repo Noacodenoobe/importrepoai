@@ -1,17 +1,28 @@
-# Agent Drugiego Mózgu
+# Agent Drugiego Mózgu (twój osobisty bibliotekarz)
 
-## Przegląd
-- Działa jako osobista baza wiedzy, wykorzystując Supabase do przechowywania wektorów.
-- `Vector Store Agent` oparty na OpenAI GPT-4o-mini dodaje i wyszukuje informacje.
-- Kontekst rozmowy przechowywany jest w Postgresie przez `Postgres Chat Memory`.
-- Integracje obejmują Telegram oraz transkrypcję YouTube do wprowadzania treści.
+## Idea
+Zamiast trzymać ważne informacje w głowie, możesz je odkładać do „drugiego
+mózgu”. Agent zapisuje notatki w bazie Supabase i potrafi je później znaleźć,
+gdy o coś zapytasz.
 
-## Przepływ
-1. Napływające dane są embedowane i zapisywane w Supabase.
-2. Zapytania użytkownika uruchamiają wyszukiwanie wektorowe.
-3. Agent tworzy odpowiedź na podstawie znalezionych fragmentów i odsyła ją użytkownikowi.
+## Jak to działa
+1. **Dodawanie informacji** – wysyłasz wiadomość lub plik. Agent tworzy z niego
+   wektor i zapisuje w bazie (jak spis treści w bibliotece).
+2. **Pytanie** – prosisz: „Przypomnij mi ciekawostki o Marsie”.
+3. **Wyszukiwanie** – agent przeszukuje bazę i zwraca pasujące fragmenty.
+4. **Odpowiedź** – z odnalezionych notatek tworzy krótkie podsumowanie.
 
-## Przełączenie na modele lokalne
-1. Zamień GPT-4o-mini na lokalny LLM (np. `llama3-8b`), aktualizując model i `baseUrl` w węźle.
-2. Wymień embeddingi OpenAI na lokalny model, np. `text-embedding-nomic`.
-3. Zaktualizuj poświadczenia, aby usuwały zdalne klucze API i kierowały zapytania na lokalne endpointy.
+## Uruchomienie krok po kroku
+1. Zaimportuj w n8n `Second_Brain_Agent.json`.
+2. Skonfiguruj połączenie z Supabase (adres i klucz). Możesz użyć darmowego
+   konta.
+3. Ustaw lokalny model LLM oraz embeddings zgodnie z
+   [Local_LLM_Setup.md](Local_LLM_Setup.md) – np. `llama3-8b` i
+   `text-embedding-nomic`.
+4. Kliknij **Execute Workflow**. Dodaj kilka notatek i spróbuj o nie zapytać.
+
+## Pomysły na rozwój
+- Połącz agenta z YouTube lub podcastami, aby automatycznie zapisywać
+  transkrypcje.
+- Dodaj funkcję przypomnień wysyłanych na e‑mail.
+

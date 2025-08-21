@@ -1,18 +1,28 @@
-# Agent zarządzania projektami
+# Agent zarządzania projektami (jak kierownik w Asanie)
 
-## Przegląd
-- Zbudowany w n8n i LangChain do obsługi projektów w Asanie.
-- Główny model LLM to Anthropic Claude.
-- Kontekst rozmowy przechowywany jest w **Simple Memory**, a narzędzie **Think** pomaga w rozumowaniu.
-- Zawiera dedykowane węzły Asany do tworzenia projektów, zadań, podzadań oraz wyszukiwania użytkowników.
+## Co robi?
+Wyobraź sobie kierownika, któremu mówisz „zrób projekt” i on od razu tworzy go
+w Asanie. Ten agent słucha twoich poleceń na czacie i wykonuje je w Asanie:
+dodaje projekty, zadania, a nawet podzadania.
 
-## Przepływ
-1. Wyzwalacz czatu przekazuje wiadomość do agenta **Project Manager**.
-2. Agent decyduje, którego narzędzia Asany użyć: utworzyć projekt, zadanie, podzadanie czy wyszukać użytkownika.
-3. Historia rozmowy zapisywana jest w **Simple Memory**, aby agent miał kontekst.
+## Jak działa
+1. **Piszesz polecenie** – np. „Stwórz projekt Strona WWW”.
+2. **Agent Project Manager** rozumie, o co prosisz i wybiera odpowiednią akcję w
+   Asanie.
+3. **Simple Memory** zapamiętuje rozmowę, więc agent pamięta, nad czym
+   pracujecie.
+4. **Think** pomaga mu lepiej zrozumieć złożone instrukcje.
 
-## Przełączenie na modele lokalne
-1. Uruchom lokalny serwer LLM (np. LocalAI, Ollama) udostępniający endpoint zgodny z OpenAI `/v1`.
-2. Zamień węzeł Anthropic Claude na węzeł typu OpenAI, wskazujący na lokalny serwer.
-3. Ustaw parametr `model` na nazwę lokalnego modelu (np. `llama3-8b-instruct`) oraz `baseUrl` na adres serwera.
-4. W n8n zaktualizuj poświadczenia tak, aby nie używać kluczy API i kierować zapytania na lokalny serwer.
+## Jak uruchomić
+1. W n8n kliknij **Import** i wybierz plik `AI Project Management.json`.
+2. W zakładce **Credentials** dodaj klucz API do Asany.
+3. Węzeł z modelem LLM ustaw na lokalny, zgodnie z poradnikiem
+   [Local_LLM_Setup.md](Local_LLM_Setup.md) (np. `llama3-8b`).
+4. Kliknij **Execute Workflow** i wpisuj polecenia w okienku czatu n8n.
+
+## Przykład użycia
+```
+Ty: "Dodaj zadanie 'Naprawić bugi' do projektu 'Strona WWW'"
+Agent: "Gotowe, zadanie dodane!"
+```
+

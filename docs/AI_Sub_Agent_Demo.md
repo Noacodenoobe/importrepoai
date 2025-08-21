@@ -1,20 +1,28 @@
-# Demonstracja podagentów
+# Demo podagentów (jak zespół piszący bloga)
 
-## Przegląd
-- Pokazuje hierarchię podagentów używaną do tworzenia wpisów na blog.
-- Główny **Blog Writer Agent** koordynuje research, tworzenie konspektu, pisanie i generowanie obrazów.
-- Wykorzystuje narzędzia: wyszukiwanie Perplexity, tworzenie tytułu i struktury, pisanie sekcji oraz generowanie grafiki.
-- Opiera się na kilku węzłach z modelami OpenAI.
+## O co chodzi?
+Wyobraź sobie redakcję. Redaktor naczelny prosi kilku reporterów o pomoc:
+jednego o research, innego o napisanie tytułów, kolejnego o napisanie
+paragrafów, a jeszcze innego o znalezienie obrazka. Ten workflow pokazuje, jak
+taka współpraca wygląda w n8n.
 
-## Przepływ
-1. **Research Agent** zbiera informacje z Perplexity i innych źródeł.
-2. **Titles and Structure Tool** proponuje tytuły i konspekt.
-3. **Write Section Tool** pisze każdą sekcję wpisu.
-4. **Generate Image Tool** tworzy pasującą grafikę.
-5. Wyniki łączy i zwraca **Blog Writer Agent**.
+## Kto tu pracuje
+- **Blog Writer Agent** – redaktor naczelny, który scala wszystko w jedną całość.
+- **Research Agent** – reporter zbierający informacje z internetu.
+- **Titles and Structure Tool** – pomaga ułożyć tytuł i plan artykułu.
+- **Write Section Tool** – pisze każdy akapit.
+- **Generate Image Tool** – dobiera grafikę pasującą do tekstu.
 
-## Przełączenie na modele lokalne
-1. Uruchom lokalny endpoint LLM zgodny z API OpenAI.
-2. Zamień każdy węzeł OpenAI na lokalny model (np. `llama3-8b` lub `mixtral-8x7b`).
-3. Ustaw opcję `baseUrl` w węźle na adres lokalnego serwera i usuń klucze API.
-4. Do generowania obrazów możesz użyć lokalnego modelu dyfuzyjnego albo pozostawić węzeł korzystający z zewnętrznego API.
+## Jak przetestować
+1. Zaimportuj w n8n plik `AI Sub Agent Demo.json`.
+2. Ustaw lokalny model zgodnie z poradnikiem
+   [Local_LLM_Setup.md](Local_LLM_Setup.md) – w każdym węźle wybierz `Local
+   OpenAI` i odpowiedni model.
+3. Kliknij **Execute Workflow** i w czacie poproś: „Napisz artykuł o zdrowym
+   śnie”. Zobaczysz, jak kolejne narzędzia kolejno się uruchamiają.
+
+## Co możesz zmienić
+- Zamień modele na inne (np. `mixtral-8x7b` zamiast `llama3-8b`).
+- Podłącz własne źródła danych do Research Agenta.
+- Dodaj dodatkowy krok, np. korektę języka przez **Bielika**.
+
